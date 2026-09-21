@@ -136,13 +136,16 @@ async def code_assist(
         except Exception:
             pass
 
+    selected_code_snippet = f"Seçili Kod Parçası:\n```{req.selected_code}```" if req.selected_code else ""
+
     prompt = f"""Sen Claude Code seviyesinde uzman bir Kıdemli Yazılım Mühendisisin.
 GÖREV: {req.instruction}
 MOD: {req.mode}
 {context_file}
-{f"Seçili Kod Parçası:\n```{req.selected_code}```" if req.selected_code else ""}
+{selected_code_snippet}
 
 Doğrudan uygulanabilir, eksiksiz, üretim kalitesinde kod ve açıklama üret."""
+
 
     res = await llm_gateway.generate_response(
         messages=[
