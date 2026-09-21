@@ -15,8 +15,9 @@ import {
   CheckCircle2,
   AlertCircle
 } from "lucide-react";
-import { ApiClient } from "@/lib/api-client";
-import { formatCurrency, cn } from "@/lib/utils";
+import { ApiClient } from "../../lib/api-client";
+import { formatCurrency, cn } from "../../lib/utils";
+
 
 export function AdminView() {
   const [stats, setStats] = useState<any | null>(null);

@@ -14,8 +14,9 @@ import {
   Wand2,
   Zap
 } from "lucide-react";
-import { ApiClient } from "@/lib/api-client";
-import { cn } from "@/lib/utils";
+import { ApiClient } from "../../lib/api-client";
+import { cn } from "../../lib/utils";
+
 
 export function MediaStudioView() {
   const [activeTab, setActiveTab] = useState<"image" | "video">("image");

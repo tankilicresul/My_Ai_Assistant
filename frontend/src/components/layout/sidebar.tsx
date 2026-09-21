@@ -17,7 +17,8 @@ import {
   ChevronRight,
   HardDrive
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
+
 
 export const navigationItems = [
   { name: "Sohbet (ChatGPT)", href: "/chat", icon: MessageSquare, badge: "Multi-LLM" },

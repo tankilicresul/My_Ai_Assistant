@@ -17,8 +17,9 @@ import {
   ChevronRight,
   ChevronDown
 } from "lucide-react";
-import { ApiClient } from "@/lib/api-client";
-import { cn } from "@/lib/utils";
+import { ApiClient } from "../../lib/api-client";
+import { cn } from "../../lib/utils";
+
 
 export function CodeStudioView() {
   const [workspaces, setWorkspaces] = useState<any[]>([]);

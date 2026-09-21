@@ -21,8 +21,9 @@ import {
   Layers,
   Zap
 } from "lucide-react";
-import { ApiClient } from "@/lib/api-client";
-import { formatBytes, cn } from "@/lib/utils";
+import { ApiClient } from "../../lib/api-client";
+import { formatBytes, cn } from "../../lib/utils";
+
 
 export function FilesView() {
   const [documents, setDocuments] = useState<any[]>([]);

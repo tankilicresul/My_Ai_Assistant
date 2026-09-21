@@ -16,8 +16,9 @@ import {
   Briefcase,
   BookOpen
 } from "lucide-react";
-import { ApiClient } from "@/lib/api-client";
-import { cn } from "@/lib/utils";
+import { ApiClient } from "../../lib/api-client";
+import { cn } from "../../lib/utils";
+
 
 export function MarketplaceView() {
   const [agents, setAgents] = useState<any[]>([]);
