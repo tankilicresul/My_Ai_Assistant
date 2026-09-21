@@ -41,6 +41,23 @@ wheels/
 htmlcov/
 .pytest_cache/
 
+# Node & Next.js
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local Storage & Databases
+*.db
+*.sqlite
+*.sqlite3
+sandbox_workspaces/
+media_storage/
+document_storage/
+
 # OS
 .DS_Store
 Thumbs.db
+
