@@ -106,15 +106,12 @@ function LoginForm() {
         <div className="w-full max-w-md">
           <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-xl relative">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-xs font-bold mb-4">
-                <Sparkles className="w-3.5 h-3.5 text-orange-500" />
-                <span>TanCoreLab Girişi</span>
-              </div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Tekrar Hoş Geldiniz</h1>
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Giriş Yap</h1>
               <p className="text-slate-500 text-xs mt-1.5">
-                Kayıtlı e-posta adresiniz ve şifreniz ile oturum açın
+                E-posta adresiniz ve şifreniz ile oturum açın
               </p>
             </div>
+
 
             {error && (
               <div className="mb-6 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-xs flex items-start space-x-2.5 animate-fadeIn font-medium">
@@ -186,24 +183,6 @@ function LoginForm() {
                 )}
               </button>
             </form>
-
-            <div className="relative my-6 text-center">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200" />
-              </div>
-              <span className="relative px-3 bg-white text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
-                Veya
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleDemoFill}
-              className="w-full py-2.5 rounded-2xl bg-slate-50 hover:bg-orange-50 border border-slate-200 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center space-x-2"
-            >
-              <ShieldCheck className="w-4 h-4 text-orange-500" />
-              <span>Geliştirici / Demo Hesabı ile Doldur</span>
-            </button>
           </div>
         </div>
       </main>

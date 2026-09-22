@@ -35,10 +35,34 @@ async def init_db():
     from app.models.user import User
     from app.models.system_setting import SystemSetting
     from app.core.security import get_password_hash
-    from sqlalchemy import select
+    from sqlalchemy import select, text
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        
+        # SQLite schema auto-migration for newly added columns
+        if "sqlite" in settings.DATABASE_URL:
+            # Check existing columns on users table
+            res = await conn.execute(text("PRAGMA table_info(users)"))
+            existing_cols = {row[1] for row in res.fetchall()}
+            
+            new_columns = [
+                ("is_banned", "BOOLEAN DEFAULT 0"),
+                ("ban_reason", "VARCHAR(255)"),
+                ("can_chat", "BOOLEAN DEFAULT 1"),
+                ("can_code_studio", "BOOLEAN DEFAULT 1"),
+                ("can_deep_research", "BOOLEAN DEFAULT 1"),
+                ("can_media_gen", "BOOLEAN DEFAULT 1"),
+                ("can_voice", "BOOLEAN DEFAULT 1"),
+                ("can_upload_files", "BOOLEAN DEFAULT 1"),
+                ("can_create_agents", "BOOLEAN DEFAULT 1"),
+            ]
+            for col_name, col_type in new_columns:
+                if col_name not in existing_cols:
+                    try:
+                        await conn.execute(text(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}"))
+                    except Exception as e:
+                        pass
 
     # Seed or ensure Superadmin user and default system settings
     async with AsyncSessionLocal() as session:
@@ -69,7 +93,7 @@ async def init_db():
                     can_create_agents=True
                 )
                 session.add(admin_user)
-                print(f"✨ Superadmin created: {admin_email}")
+                print(f"[Admin Seed] Superadmin created: {admin_email}")
             else:
                 # Ensure admin privileges & updated password
                 admin_user.role = "admin"
@@ -84,7 +108,7 @@ async def init_db():
                 admin_user.can_upload_files = True
                 admin_user.can_create_agents = True
                 session.add(admin_user)
-                print(f"✨ Superadmin refreshed & verified: {admin_email}")
+                print(f"[Admin Seed] Superadmin refreshed & verified: {admin_email}")
 
             # Ensure default SystemSetting entry
             stmt_settings = select(SystemSetting)
@@ -106,4 +130,4 @@ async def init_db():
             await session.commit()
         except Exception as e:
             await session.rollback()
-            print(f"⚠️ Error seeding database: {e}")
+            print(f"[Admin Seed] Warning seeding database: {e}")

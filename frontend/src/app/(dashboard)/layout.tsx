@@ -1,5 +1,6 @@
 import { Sidebar } from "../../components/layout/sidebar";
 import { AuthGuard } from "../../components/auth/auth-guard";
+import { SystemBanner } from "../../components/layout/system-banner";
 
 export default function DashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function DashboardLayout({
       <div className="flex min-h-screen bg-[#F8F9FB] text-slate-800">
         <Sidebar />
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+          <SystemBanner />
           {children}
         </div>
       </div>

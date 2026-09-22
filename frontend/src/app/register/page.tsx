@@ -117,15 +117,13 @@ function RegisterForm() {
         <div className="w-full max-w-md">
           <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-xl relative">
             <div className="text-center mb-6">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-xs font-bold mb-3">
-                <Gift className="w-3.5 h-3.5 text-orange-500" />
-                <span>100M Başlangıç Token Hediyesi</span>
-              </div>
               <h1 className="text-2xl font-black text-slate-900 tracking-tight">Hesap Oluşturun</h1>
               <p className="text-slate-500 text-xs mt-1.5">
-                Tüm yapay zeka modelleri ve araçlarına tek hesapla anında erişin
+                TanCoreLab platformunda yeni bir hesap oluşturun
               </p>
             </div>
+
+
 
             {error && (
               <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-xs flex items-start space-x-2.5 animate-fadeIn font-medium">
@@ -227,11 +225,11 @@ function RegisterForm() {
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4" />
-                      <span>Hesabı Başlat & 100M Token Al</span>
+                      <span>Kayıt Ol</span>
                       <ArrowRight className="w-4 h-4 ml-1" />
                     </>
                   )}
+
                 </button>
               </div>
             </form>

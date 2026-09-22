@@ -129,8 +129,34 @@ export class ApiClient {
   // Admin APIs
   static getAdminStats = () => this.request<any>("/admin/stats");
   static getTokenUsage = () => this.request<any[]>("/admin/tokens/by-model");
-  static getAdminUsers = () => this.request<any[]>("/admin/users");
-  static getAuditLogs = () => this.request<any[]>("/admin/logs");
+  static getAdminUsers = (params?: { query?: string; role?: string; status_filter?: string }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.query) searchParams.append("query", params.query);
+    if (params?.role) searchParams.append("role", params.role);
+    if (params?.status_filter) searchParams.append("status_filter", params.status_filter);
+    const qs = searchParams.toString();
+    return this.request<any[]>(`/admin/users${qs ? `?${qs}` : ""}`);
+  };
+  static createUserAdmin = (data: any) => this.request<any>("/admin/users", { method: "POST", body: JSON.stringify(data) });
+  static updateUserPermissions = (userId: string, data: any) => this.request<any>(`/admin/users/${userId}/permissions`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+  static resetUserPasswordAdmin = (userId: string, newPassword: string) => this.request<any>(`/admin/users/${userId}/password`, {
+    method: "PUT",
+    body: JSON.stringify({ new_password: newPassword }),
+  });
+  static deleteUserAdmin = (userId: string) => this.request<any>(`/admin/users/${userId}`, { method: "DELETE" });
+
+  static getSystemSettings = () => this.request<any>("/admin/settings");
+  static updateSystemSettings = (data: any) => this.request<any>("/admin/settings", { method: "PUT", body: JSON.stringify(data) });
+  static getProviderHealth = () => this.request<any[]>("/admin/providers");
+  static getAuditLogs = (query?: string) => {
+    const qs = query ? `?query=${encodeURIComponent(query)}` : "";
+    return this.request<any[]>(`/admin/logs${qs}`);
+  };
+  static clearAuditLogs = () => this.request<any>("/admin/logs/clear", { method: "DELETE" });
+  static getPublicConfig = () => this.request<any>("/admin/public-config");
 
   // Voice, Podcast & Arena APIs
   static generatePodcast = (data: any) => this.request<any>("/voice/podcast", { method: "POST", body: JSON.stringify(data) });
