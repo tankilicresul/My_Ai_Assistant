@@ -22,6 +22,40 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className="light">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function removeNetlifyBadge() {
+                  var selectors = [
+                    '[data-netlify-deploy-preview-badge]',
+                    '#netlify-drawer',
+                    '#netlify-badge',
+                    '.netlify-badge',
+                    'iframe[src*="netlify"]',
+                    'iframe[title*="Netlify"]',
+                    'netlify-drawer',
+                    'netlify-feedback'
+                  ];
+                  selectors.forEach(function(sel) {
+                    var els = document.querySelectorAll(sel);
+                    els.forEach(function(el) {
+                      if (el && el.parentNode) el.parentNode.removeChild(el);
+                    });
+                  });
+                }
+                if (typeof window !== 'undefined') {
+                  window.addEventListener('DOMContentLoaded', removeNetlifyBadge);
+                  window.addEventListener('load', removeNetlifyBadge);
+                  var observer = new MutationObserver(removeNetlifyBadge);
+                  observer.observe(document.documentElement, { childList: true, subtree: true });
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="bg-[#F8F9FB] text-slate-800 min-h-screen antialiased flex flex-col selection:bg-orange-500 selection:text-white">
         <AuthProvider>
           {children}

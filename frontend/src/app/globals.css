@@ -77,3 +77,31 @@ body {
 .tancore-glow {
   box-shadow: 0 0 30px rgba(255, 107, 0, 0.2);
 }
+
+/* Completely remove and hide Netlify badges, drawers, and injected watermarks */
+[data-netlify-deploy-preview-badge],
+[data-netlify-drawer],
+#netlify-drawer,
+#netlify-badge,
+.netlify-badge,
+iframe[src*="netlify"],
+div[id*="netlify"],
+div[class*="netlify"],
+div[data-testid*="netlify"],
+iframe[title*="Netlify"],
+netlify-drawer,
+netlify-feedback,
+a[href*="netlify.com"][class*="badge"],
+div:has(> a[href*="netlify.com"]),
+div:has(> iframe[src*="netlify"]) {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  z-index: -9999 !important;
+}
