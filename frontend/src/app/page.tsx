@@ -159,14 +159,18 @@ export default function HomePage() {
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center">
         <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold mb-5 tracking-wider uppercase shadow-xs">
+            <Zap className="w-3.5 h-3.5 text-orange-600 fill-orange-500" />
+            <span>TanCoreLab AI Suite</span>
+          </div>
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-900 mb-6 leading-tight">
-            ChatGPT + Claude Code + Gemini <br />
+            ALL-IN-ONE <br />
             <span className="bg-gradient-to-r from-[#FFA200] via-[#FF7500] to-[#FF4800] bg-clip-text text-transparent">
-              Hepsi Bir Arada
+              AI PLATFORM
             </span>
           </h1>
-          <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-            Kurumsal ölçekte birleşik yapay zeka SaaS platformu. Kod geliştirin, medya üretin, derin araştırmalar yapın ve vektör hafızanızı yönetin.
+          <p className="text-slate-600 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto">
+            Sohbet, kodlama stüdyosu, medya üretimi, derin web araştırması ve otonom yapay zeka ajanları tek bir çatı altında.
           </p>
         </div>
 

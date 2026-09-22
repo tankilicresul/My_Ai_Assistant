@@ -3,8 +3,8 @@ import "./globals.css";
 import { AuthProvider } from "../context/auth-context";
 
 export const metadata: Metadata = {
-  title: "TanCoreLab - AI Super-Platform",
-  description: "Unified AI Platform: ChatGPT + Claude Code + Gemini Deep Research + Media Studio + Vector Memory + Autonomous Agents",
+  title: "TanCoreLab - All-in-One AI Platform",
+  description: "Unified All-in-One AI Super-Platform: Chat, Code Studio, Media Generator, Deep Research, Vector Memory & Autonomous Agents",
 };
 
 export default function RootLayout({
