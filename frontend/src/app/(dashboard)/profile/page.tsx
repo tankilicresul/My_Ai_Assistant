@@ -2,30 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Flame,
   CheckCircle2,
-
   AlertCircle,
   Building2,
   GraduationCap,
-  Menu,
-  Trophy,
-  TrendingUp,
   ShieldCheck,
   User as UserIcon,
-  Mail,
   KeyRound,
   Save,
-  RotateCcw,
   LogOut,
-  Layers,
   Sparkles,
-  Zap,
 } from "lucide-react";
 import { useAuth } from "../../../context/auth-context";
 
 export default function ProfilePage() {
-  const { user, updateProfile, changePassword, logout, refreshUser } = useAuth();
+  const { user, updateProfile, changePassword, logout } = useAuth();
 
   // Profile form state
   const [fullName, setFullName] = useState("");
@@ -106,9 +97,8 @@ export default function ProfilePage() {
 
   return (
     <div className="flex-1 p-4 md:p-8 space-y-6 max-w-4xl mx-auto w-full">
-      {/* Main Profile Hero Card (Exact styling from 2nd photo) */}
+      {/* Main Profile Hero Card */}
       <div className="relative rounded-[28px] bg-gradient-to-r from-[#FFA200] via-[#FF7500] to-[#FF4800] p-6 md:p-8 text-white shadow-xl shadow-orange-500/20 overflow-hidden">
-
         {/* Subtle background glow effect */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -147,71 +137,11 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-
-          {/* Top Right Menu Hamburger Button */}
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="p-2.5 rounded-2xl bg-white/20 hover:bg-white/30 text-white transition-all backdrop-blur-sm border border-white/20 shadow-xs"
-            title="Ayarlar Menüsü"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Two Vibrant Action Buttons (Like 2nd photo) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#FFA200] via-[#FF7500] to-[#FF5500] hover:from-[#FF9000] hover:to-[#E64A00] text-white font-bold text-sm shadow-lg shadow-orange-500/25 transition-all text-center flex items-center justify-center space-x-2"
-        >
-          <span>{isEditing ? "Düzenlemeyi Kapat" : "Edit Profile"}</span>
-        </button>
-
-        <div className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#FFA200] via-[#FF7500] to-[#FF5500] text-white font-bold text-sm shadow-lg shadow-orange-500/25 flex items-center justify-center space-x-2">
-          <Trophy className="w-4 h-4" />
-          <span>2. Rank</span>
-        </div>
-      </div>
-
-      {/* 3 Pastel Stats Cards (Exact styling from 2nd photo) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* TOTAL XP / AI TOKEN Card */}
-        <div className="p-5 rounded-2xl bg-[#FFF8F2] border border-[#FFE2CC] flex flex-col items-center justify-center text-center shadow-xs">
-          <div className="flex items-center space-x-1.5 text-[#FF6B00] mb-1">
-            <Trophy className="w-5 h-5" />
-            <span className="text-xl font-black font-mono">450</span>
-          </div>
-          <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
-            TOTAL XP
-          </span>
-        </div>
-
-        {/* STREAK Card */}
-        <div className="p-5 rounded-2xl bg-[#FFFDF0] border border-[#FFF3B8] flex flex-col items-center justify-center text-center shadow-xs">
-          <div className="flex items-center space-x-1.5 text-[#E68A00] mb-1">
-            <Flame className="w-5 h-5 fill-[#E68A00]" />
-            <span className="text-xl font-black font-mono">5</span>
-          </div>
-          <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
-            STREAK
-          </span>
-        </div>
-
-        {/* ACCURACY Card */}
-        <div className="p-5 rounded-2xl bg-[#F0FDF8] border border-[#CCFBF1] flex flex-col items-center justify-center text-center shadow-xs">
-          <div className="flex items-center space-x-1.5 text-[#0D9488] mb-1">
-            <TrendingUp className="w-5 h-5" />
-            <span className="text-xl font-black font-mono">100%</span>
-          </div>
-          <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
-            ACCURACY
-          </span>
         </div>
       </div>
 
       {/* AI Token Quota & Resource Progress Bar Card */}
-      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
+      <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-3">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center space-x-2 font-bold text-slate-800">
             <Sparkles className="w-4 h-4 text-orange-500" />
@@ -237,7 +167,7 @@ export default function ProfilePage() {
       {/* Edit Profile & Password Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Profile Information */}
-        <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-100">
             <div className="p-2 rounded-xl bg-orange-50 text-orange-600">
               <UserIcon className="w-4 h-4" />
@@ -320,7 +250,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Security & Password Change */}
-        <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-100">
             <div className="p-2 rounded-xl bg-orange-50 text-orange-600">
               <KeyRound className="w-4 h-4" />

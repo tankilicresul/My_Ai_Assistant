@@ -18,7 +18,6 @@ import {
   User as UserIcon,
   Radio,
   LogIn,
-  GripVertical,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -26,16 +25,16 @@ import { cn } from "../../lib/utils";
 import { useAuth } from "../../context/auth-context";
 
 export const navigationItems = [
-  { name: "Sohbet & Model Arena", href: "/chat", iconSrc: "/icons/chat.jpg", icon: MessageSquare, badge: "Çoklu LLM" },
-  { name: "Kodlama Stüdyosu & IDE", href: "/code", iconSrc: "/icons/code.jpg", icon: Code2, badge: "Terminal" },
-  { name: "Sesli Asistan & Podcast", href: "/podcast", iconSrc: "/icons/podcast.jpg", icon: Radio, badge: "Sesli AI" },
-  { name: "Görsel & Video Stüdyosu", href: "/studio", iconSrc: "/icons/studio.png", icon: Sparkles, badge: "Medya" },
-  { name: "Derin Web Araştırması", href: "/research", iconSrc: "/icons/research.jpg", icon: Compass, badge: "Araştırma" },
-  { name: "Vektörel Bellek & Hafıza", href: "/memory", iconSrc: "/icons/memory.jpg", icon: Database, badge: "Hafıza" },
-  { name: "Belge & Veri Analizi", href: "/files", iconSrc: "/icons/files.jpg", icon: FileSpreadsheet, badge: "PDF & Excel" },
-  { name: "Yapay Zeka Ajan Pazarı", href: "/marketplace", iconSrc: "/icons/marketplace.jpg", icon: Bot, badge: "Ajanlar" },
-  { name: "Yönetim & Sistem Paneli", href: "/admin", iconSrc: "/icons/admin.jpg", icon: ShieldAlert, badge: "Yönetici" },
-  { name: "Profil & Hesap Ayarları", href: "/profile", iconSrc: "/icons/profile.jpg", icon: UserIcon, badge: "Profil" },
+  { name: "Sohbet & Model Arena", href: "/chat", iconSrc: "/icons/chat.jpg", icon: MessageSquare },
+  { name: "Kodlama Stüdyosu & IDE", href: "/code", iconSrc: "/icons/code.jpg", icon: Code2 },
+  { name: "Sesli Asistan & Podcast", href: "/podcast", iconSrc: "/icons/podcast.jpg", icon: Radio },
+  { name: "Görsel & Video Stüdyosu", href: "/studio", iconSrc: "/icons/studio.png", icon: Sparkles },
+  { name: "Derin Web Araştırması", href: "/research", iconSrc: "/icons/research.jpg", icon: Compass },
+  { name: "Vektörel Bellek & Hafıza", href: "/memory", iconSrc: "/icons/memory.jpg", icon: Database },
+  { name: "Belge & Veri Analizi", href: "/files", iconSrc: "/icons/files.jpg", icon: FileSpreadsheet },
+  { name: "Yapay Zeka Ajan Pazarı", href: "/marketplace", iconSrc: "/icons/marketplace.jpg", icon: Bot },
+  { name: "Yönetim & Sistem Paneli", href: "/admin", iconSrc: "/icons/admin.jpg", icon: ShieldAlert },
+  { name: "Profil & Hesap Ayarları", href: "/profile", iconSrc: "/icons/profile.jpg", icon: UserIcon },
 ];
 
 export function Sidebar() {
@@ -106,7 +105,7 @@ export function Sidebar() {
   };
 
   const displayName = user?.full_name || (user?.email ? user.email.split("@")[0] : "Misafir");
-  const displayRole = user?.role === "admin" ? "Yönetici Plan" : "Plus Üye";
+  const displayRole = user?.role === "admin" ? "Yönetici" : "Standart Üye";
   const initials = user?.full_name
     ? user.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
     : user?.email
@@ -118,17 +117,17 @@ export function Sidebar() {
   return (
     <aside
       style={{ width: `${effectiveWidth}px` }}
-      className="border-r border-slate-200 bg-white flex flex-col justify-between shrink-0 h-screen sticky top-0 shadow-sm z-40 relative transition-[width] duration-75 select-none"
+      className="border-r border-slate-200 bg-white flex flex-col justify-between shrink-0 h-screen sticky top-0 shadow-xs z-40 relative transition-[width] duration-75 select-none"
     >
       {/* Brand Header */}
       <div>
         <div className="h-16 px-4 border-b border-slate-100 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2.5 overflow-hidden group">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center shrink-0 shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center shrink-0 shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
               <Zap className="w-5 h-5 text-white fill-white" />
             </div>
             {!isCollapsed && (
-              <span className="font-extrabold text-lg tracking-tight text-slate-900 whitespace-nowrap">
+              <span className="font-black text-lg tracking-tight text-slate-900 whitespace-nowrap">
                 TanCore<span className="text-orange-600">Lab</span>
               </span>
             )}
@@ -137,14 +136,14 @@ export function Sidebar() {
             <div className="flex items-center space-x-1">
               <Link
                 href="/"
-                className="text-slate-400 hover:text-orange-600 p-1.5 rounded-lg hover:bg-orange-50 transition-colors"
+                className="text-slate-400 hover:text-orange-600 p-1.5 rounded-xl hover:bg-orange-50 transition-colors"
                 title="Ana Sayfa"
               >
                 <Home className="w-4 h-4" />
               </Link>
               <button
                 onClick={toggleCollapse}
-                className="text-slate-400 hover:text-orange-600 p-1.5 rounded-lg hover:bg-orange-50 transition-colors"
+                className="text-slate-400 hover:text-orange-600 p-1.5 rounded-xl hover:bg-orange-50 transition-colors"
                 title="Menüyü Daralt"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -154,7 +153,7 @@ export function Sidebar() {
           {isCollapsed && (
             <button
               onClick={toggleCollapse}
-              className="text-slate-400 hover:text-orange-600 p-1.5 rounded-lg hover:bg-orange-50 transition-colors mx-auto"
+              className="text-slate-400 hover:text-orange-600 p-1.5 rounded-xl hover:bg-orange-50 transition-colors mx-auto"
               title="Menüyü Genişlet"
             >
               <ChevronRight className="w-4 h-4" />
@@ -163,7 +162,7 @@ export function Sidebar() {
         </div>
 
         {/* Navigation links */}
-        <nav className="p-2 space-y-1 overflow-y-auto max-h-[calc(100vh-190px)]">
+        <nav className="p-2.5 space-y-1 overflow-y-auto max-h-[calc(100vh-190px)]">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname.startsWith(item.href);
@@ -173,42 +172,26 @@ export function Sidebar() {
                 href={item.href}
                 title={item.name}
                 className={cn(
-                  "flex items-center rounded-xl text-xs font-medium transition-all group",
-                  isCollapsed ? "justify-center p-2" : "justify-between px-2.5 py-2",
+                  "flex items-center rounded-2xl text-xs font-bold transition-all group",
+                  isCollapsed ? "justify-center p-2.5" : "px-3 py-2.5",
                   isActive
-                    ? "bg-orange-50 text-orange-600 border border-orange-200 font-semibold shadow-xs"
+                    ? "bg-orange-50 text-orange-600 border border-orange-200 shadow-xs"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent"
                 )}
               >
-                <div className="flex items-center space-x-2.5 overflow-hidden">
+                <div className="flex items-center space-x-3 overflow-hidden">
                   <div
                     className={cn(
-                      "w-6 h-6 rounded-lg overflow-hidden shrink-0 border transition-transform p-0.5 bg-amber-50/60",
+                      "w-7 h-7 rounded-xl flex items-center justify-center shrink-0 border transition-transform",
                       isActive
-                        ? "border-orange-400 shadow-xs shadow-orange-500/20 scale-105"
-                        : "border-slate-200/80 opacity-85 group-hover:opacity-100 group-hover:scale-105"
+                        ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border-orange-400 shadow-xs scale-105"
+                        : "bg-slate-100 text-slate-600 border-slate-200 group-hover:border-orange-200 group-hover:bg-orange-50 group-hover:text-orange-600"
                     )}
                   >
-                    <img
-                      src={item.iconSrc}
-                      alt={item.name}
-                      className="w-full h-full object-cover rounded-[5px]"
-                    />
+                    <Icon className="w-3.5 h-3.5" />
                   </div>
-                  {!isCollapsed && <span className="break-words leading-tight">{item.name}</span>}
+                  {!isCollapsed && <span className="truncate leading-tight">{item.name}</span>}
                 </div>
-                {!isCollapsed && (
-                  <span
-                    className={cn(
-                      "text-[10px] px-1.5 py-0.5 rounded font-mono shrink-0",
-                      isActive
-                        ? "bg-orange-100 text-orange-700 font-semibold"
-                        : "bg-slate-100 text-slate-500"
-                    )}
-                  >
-                    {item.badge}
-                  </span>
-                )}
               </Link>
             );
           })}
@@ -216,20 +199,20 @@ export function Sidebar() {
       </div>
 
       {/* User / Quota Footer */}
-      <div className="p-3 border-t border-slate-100 bg-slate-50/60">
+      <div className="p-3.5 border-t border-slate-100 bg-slate-50/70">
         {isAuthenticated ? (
           <>
-            <div className={cn("flex items-center mb-2", isCollapsed ? "justify-center" : "justify-between")}>
+            <div className={cn("flex items-center mb-2.5", isCollapsed ? "justify-center" : "justify-between")}>
               <Link href="/profile" className="flex items-center space-x-2.5 overflow-hidden group">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-sm shadow-orange-500/20 group-hover:ring-2 ring-orange-400 transition-all">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center text-xs font-black text-white shrink-0 shadow-sm shadow-orange-500/20 group-hover:ring-2 ring-orange-400 transition-all">
                   {initials}
                 </div>
                 {!isCollapsed && (
                   <div className="overflow-hidden">
-                    <p className="text-xs font-semibold text-slate-800 break-words group-hover:text-orange-600 transition-colors">
+                    <p className="text-xs font-black text-slate-900 truncate group-hover:text-orange-600 transition-colors">
                       {displayName}
                     </p>
-                    <p className="text-[10px] text-orange-600 font-medium break-words">{displayRole}</p>
+                    <p className="text-[10px] text-orange-600 font-bold">{displayRole}</p>
                   </div>
                 )}
               </Link>
@@ -244,14 +227,14 @@ export function Sidebar() {
               )}
             </div>
             {!isCollapsed && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                  <span>AI Kotası</span>
-                  <span className="font-semibold text-slate-700">
+              <div className="space-y-1.5 pt-1">
+                <div className="flex justify-between text-[10px] text-slate-500 font-mono font-bold">
+                  <span>Token Kotası</span>
+                  <span className="text-slate-700">
                     {formatTokens(usedTokens)} / {formatTokens(quotaTokens)}
                   </span>
                 </div>
-                <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden p-0.5">
+                <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-orange-600 rounded-full transition-all duration-300"
                     style={{ width: `${Math.max(1, usagePercentage)}%` }}
@@ -265,7 +248,7 @@ export function Sidebar() {
             <Link
               href="/login"
               className={cn(
-                "w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs font-semibold flex items-center justify-center space-x-2 transition-all shadow-md shadow-orange-500/20",
+                "w-full py-2.5 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs font-bold flex items-center justify-center space-x-2 transition-all shadow-md shadow-orange-500/20",
                 isCollapsed && "p-2"
               )}
             >

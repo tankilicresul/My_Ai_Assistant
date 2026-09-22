@@ -9,14 +9,15 @@ import {
   Save,
   GitBranch,
   GitCommit,
-  Sparkles,
   RefreshCw,
   Bug,
   CheckCircle,
   FileText,
   ChevronRight,
   ChevronDown,
-  GripVertical,
+  Sparkles,
+  Send,
+  Zap
 } from "lucide-react";
 import { ApiClient } from "../../lib/api-client";
 import { cn } from "../../lib/utils";
@@ -37,7 +38,7 @@ export function CodeStudioView() {
   const [gitStatus, setGitStatus] = useState<string>("");
 
   // Resizable Panes
-  const [explorerWidth, setExplorerWidth] = useState(240);
+  const [explorerWidth, setExplorerWidth] = useState(250);
   const [editorHeightPercent, setEditorHeightPercent] = useState(55);
   const isResizingExplorerRef = useRef(false);
   const isResizingSplitRef = useRef(false);
@@ -198,11 +199,11 @@ export function CodeStudioView() {
       {/* 1. Workspace & File Explorer Sidebar */}
       <div
         style={{ width: `${explorerWidth}px` }}
-        className="border-r border-slate-200 bg-white flex flex-col justify-between shrink-0 relative transition-[width] duration-75 select-none"
+        className="border-r border-slate-200 bg-white flex flex-col justify-between shrink-0 relative select-none shadow-xs"
       >
         <div>
           <div className="p-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center space-x-1.5">
+            <span className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
               <Folder className="w-3.5 h-3.5 text-orange-600" />
               <span>Gezgin</span>
             </span>
@@ -265,7 +266,7 @@ export function CodeStudioView() {
             </button>
             <button
               onClick={() => handleGitAction("commit")}
-              className="px-2 py-1 bg-orange-50 hover:bg-orange-100 border border-orange-200 text-[10px] font-bold rounded-lg text-orange-700 transition-colors shadow-xs"
+              className="px-2 py-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-[10px] font-bold rounded-lg transition-all shadow-xs"
             >
               Commit
             </button>
@@ -285,13 +286,13 @@ export function CodeStudioView() {
       {/* 2. Center & Right Split: Editor, Terminal & AI Task Bar */}
       <div className="flex-1 flex flex-col h-screen min-w-0">
         {/* Editor Tab Header */}
-        <div className="h-10 border-b border-slate-200 bg-white px-4 flex items-center justify-between">
+        <div className="h-10 border-b border-slate-200 bg-white px-4 flex items-center justify-between shadow-xs">
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-mono font-semibold text-slate-700 flex items-center space-x-1.5">
+            <span className="text-xs font-mono font-bold text-slate-800 flex items-center space-x-1.5">
               <FileText className="w-3.5 h-3.5 text-orange-600" />
               <span>{selectedFilePath || "Dosya seçilmedi"}</span>
             </span>
-            {isModified && <span className="w-2 h-2 rounded-full bg-amber-500" title="Kaydedilmemiş değişiklikler" />}
+            {isModified && <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" title="Kaydedilmemiş değişiklikler" />}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -329,20 +330,20 @@ export function CodeStudioView() {
           <div
             onMouseDown={startResizingSplit}
             title="Editör ve Terminal Yüksekliğini Ayarlayın"
-            className="h-1.5 bg-slate-200 hover:bg-orange-500/40 active:bg-orange-600 cursor-row-resize flex items-center justify-center transition-colors z-20"
+            className="h-2 bg-slate-100 hover:bg-orange-400 border-y border-slate-200 cursor-row-resize flex items-center justify-center transition-colors z-20 group"
           >
-            <div className="w-8 h-0.5 bg-slate-400 rounded-full" />
+            <div className="w-8 h-0.5 bg-slate-300 group-hover:bg-white rounded-full" />
           </div>
 
-          {/* Bottom Half: Terminal & AI Task Bar */}
+          {/* Bottom Half: TanCoreLab Light Terminal & AI Task Bar */}
           <div
             style={{ height: `${100 - editorHeightPercent}%` }}
-            className="bg-slate-950 flex flex-col min-h-0 text-slate-100"
+            className="bg-[#F8F9FB] flex flex-col min-h-0 text-slate-800 border-t border-slate-200"
           >
             {/* Claude Code Prompt Bar */}
-            <div className="p-2 border-b border-slate-800 bg-slate-900 flex items-center space-x-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center shrink-0">
-                <TerminalIcon className="w-3.5 h-3.5 text-white" />
+            <div className="p-2.5 border-b border-slate-200 bg-white flex items-center space-x-2 shadow-xs">
+              <div className="w-7 h-7 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0 text-orange-600">
+                <TerminalIcon className="w-4 h-4" />
               </div>
               <input
                 type="text"
@@ -350,12 +351,12 @@ export function CodeStudioView() {
                 onChange={(e) => setAiInstruction(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleClaudeAssist()}
                 placeholder="TanCoreLab AI'ya talimat ver: 'Hataları ayıkla', 'Birim testler üret', 'Refactor et'..."
-                className="flex-1 bg-slate-950 border border-slate-800 text-xs px-3 py-1.5 rounded-lg text-slate-200 focus:outline-none focus:border-orange-500"
+                className="flex-1 bg-slate-50 border border-slate-200 text-xs px-3.5 py-1.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-all"
               />
               <select
                 value={aiMode}
                 onChange={(e) => setAiMode(e.target.value)}
-                className="bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none"
+                className="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl px-3 py-1.5 focus:outline-none focus:border-orange-500"
               >
                 <option value="edit">Düzenle / Kod Üret</option>
                 <option value="debug">Hata Ayıkla</option>
@@ -365,32 +366,33 @@ export function CodeStudioView() {
               <button
                 onClick={handleClaudeAssist}
                 disabled={aiLoading || !aiInstruction.trim()}
-                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 disabled:opacity-40 text-white text-xs font-bold flex items-center space-x-1 transition-all"
+                className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 disabled:opacity-40 text-white text-xs font-bold flex items-center space-x-1 transition-all shadow-sm shadow-orange-500/20"
               >
+                <Zap className="w-3.5 h-3.5" />
                 <span>{aiLoading ? "İşleniyor..." : "Uygula"}</span>
               </button>
             </div>
 
             {/* Terminal Console */}
-            <div className="flex-1 p-3 font-mono text-xs overflow-y-auto text-emerald-400 bg-slate-950 whitespace-pre-wrap selection:bg-emerald-900">
+            <div className="flex-1 p-4 font-mono text-xs overflow-y-auto text-slate-800 bg-[#F8F9FB] whitespace-pre-wrap leading-relaxed select-text">
               {terminalOutput}
             </div>
 
             {/* Terminal Command Input */}
-            <div className="p-2 border-t border-slate-800 bg-slate-950 flex items-center space-x-2">
-              <span className="text-xs font-mono text-slate-500 pl-2">$</span>
+            <div className="p-2.5 border-t border-slate-200 bg-white flex items-center space-x-2 shadow-xs">
+              <span className="text-xs font-mono font-bold text-orange-600 pl-2">$</span>
               <input
                 type="text"
                 value={terminalInput}
                 onChange={(e) => setTerminalInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleRunTerminal()}
                 placeholder="Terminal komutu çalıştır (örn: ls -la, python script.py, git status)..."
-                className="flex-1 bg-transparent text-xs font-mono text-slate-200 focus:outline-none"
+                className="flex-1 bg-transparent text-xs font-mono text-slate-800 placeholder-slate-400 focus:outline-none"
               />
               <button
                 onClick={() => handleRunTerminal()}
                 disabled={termLoading}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono"
+                className="px-3 py-1 rounded-xl bg-slate-100 hover:bg-orange-50 hover:text-orange-700 border border-slate-200 text-slate-700 text-xs font-mono font-bold transition-colors"
               >
                 {termLoading ? "Çalışıyor..." : "Çalıştır"}
               </button>

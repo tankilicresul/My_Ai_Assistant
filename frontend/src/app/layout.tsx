@@ -5,6 +5,14 @@ import { AuthProvider } from "../context/auth-context";
 export const metadata: Metadata = {
   title: "TanCoreLab - All-in-One AI Platform",
   description: "Unified All-in-One AI Super-Platform: Chat, Code Studio, Media Generator, Deep Research, Vector Memory & Autonomous Agents",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/logo.png", type: "image/png" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
