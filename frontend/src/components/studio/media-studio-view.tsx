@@ -72,9 +72,10 @@ export function MediaStudioView() {
   ];
 
   const videoModels = [
+    { id: "minimax-video", name: "Minimax Video-01", badge: "Higgsfield / Hailuo", provider: "Minimax AI" },
     { id: "wan-2.1", name: "Wan 2.1 Video", badge: "1080p Sinematik", provider: "Wan AI" },
-    { id: "cogvideox-5b", name: "CogVideoX 5B", badge: "Open Source", provider: "THUDM" },
     { id: "kling-v1.5", name: "Kling 1.5 Pro", badge: "Akıcı Hareket", provider: "Kuaishou" },
+    { id: "cogvideox-5b", name: "CogVideoX 5B", badge: "Open Source", provider: "THUDM" },
     { id: "veo-2", name: "Google Veo 2", badge: "DeepMind Ultra", provider: "Google" },
   ];
 

@@ -3,7 +3,7 @@ import uuid
 import time
 import urllib.parse
 import random
-import mimetypes
+import asyncio
 import httpx
 from typing import Dict, Any, Optional
 from app.core.config import settings
@@ -12,7 +12,7 @@ class MediaGeneratorService:
     """
     Higgsfield / Midjourney style Media Generation Studio Service.
     Supports Image models (Flux 1 Pro/Dev/Schnell, SDXL, DALL-E 3)
-    and Video models (Wan 2.1, CogVideoX, Kling AI, Google Veo).
+    and Video models (Minimax Video-01, Wan 2.1, Kling 1.5 Pro, CogVideoX, Google Veo).
     """
 
     SUPPORTED_IMAGE_MODELS = [
@@ -24,10 +24,11 @@ class MediaGeneratorService:
     ]
 
     SUPPORTED_VIDEO_MODELS = [
+        {"id": "minimax-video", "name": "Minimax Video-01", "badge": "Higgsfield / Hailuo", "provider": "Minimax AI"},
         {"id": "wan-2.1", "name": "Wan 2.1 Video", "badge": "1080p Sinematik", "provider": "Wan AI"},
-        {"id": "cogvideox-5b", "name": "CogVideoX 5B", "badge": "Open Source", "provider": "THUDM"},
         {"id": "kling-v1.5", "name": "Kling 1.5 Pro", "badge": "Akıcı Hareket", "provider": "Kuaishou Kling"},
-        {"id": "veo-2", "name": "Google Veo 2", "badge": "DeepMind Ultra HD", "provider": "Google DeepMind"},
+        {"id": "cogvideox-5b", "name": "CogVideoX 5B", "badge": "Open Source", "provider": "THUDM"},
+        {"id": "veo-2", "name": "Google Veo 2", "badge": "DeepMind Ultra", "provider": "Google DeepMind"},
     ]
 
     async def generate_image(
@@ -44,7 +45,7 @@ class MediaGeneratorService:
         seedance_camera: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Generate image via OpenAI DALL-E 3 / Together AI FLUX / Fal.ai / Pollinations.ai FLUX engine.
+        Generate image via Replicate FLUX / Fal.ai / OpenAI DALL-E 3 / Together AI / Pollinations.ai.
         """
         start_time = time.time()
         file_id = f"img_{uuid.uuid4().hex[:12]}"
@@ -54,10 +55,76 @@ class MediaGeneratorService:
         dims = self._aspect_ratio_to_dim(aspect_ratio)
         w, h = dims["width"], dims["height"]
 
-        # 1. OpenAI DALL-E 3 (If configured and requested)
-        if settings.OPENAI_API_KEY and (model == "dall-e-3" or "dalle" in model):
+        # 1. Replicate FLUX (If REPLICATE_API_TOKEN is present)
+        if not image_url and settings.REPLICATE_API_TOKEN:
             try:
-                async with httpx.AsyncClient(timeout=60.0) as client:
+                rep_model = "black-forest-labs/flux-schnell" if "schnell" in model else "black-forest-labs/flux-1.1-pro"
+                async with httpx.AsyncClient(timeout=45.0) as client:
+                    create_resp = await client.post(
+                        f"https://api.replicate.com/v1/models/{rep_model}/predictions",
+                        headers={
+                            "Authorization": f"Bearer {settings.REPLICATE_API_TOKEN}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "input": {
+                                "prompt": prompt,
+                                "aspect_ratio": "16:9" if aspect_ratio == "16:9" else ("9:16" if aspect_ratio == "9:16" else "1:1"),
+                                "output_format": "jpg"
+                            }
+                        }
+                    )
+                    if create_resp.status_code in [200, 201]:
+                        pred = create_resp.json()
+                        pred_id = pred.get("id")
+                        get_url = pred.get("urls", {}).get("get") or f"https://api.replicate.com/v1/predictions/{pred_id}"
+                        
+                        # Poll for completion (up to 30 seconds)
+                        for _ in range(15):
+                            await asyncio.sleep(2)
+                            poll_resp = await client.get(get_url, headers={"Authorization": f"Bearer {settings.REPLICATE_API_TOKEN}"})
+                            if poll_resp.status_code == 200:
+                                poll_data = poll_resp.json()
+                                p_status = poll_data.get("status")
+                                if p_status == "succeeded":
+                                    output = poll_data.get("output")
+                                    if isinstance(output, list) and len(output) > 0:
+                                        image_url = output[0]
+                                    elif isinstance(output, str):
+                                        image_url = output
+                                    break
+                                elif p_status in ["failed", "canceled"]:
+                                    break
+            except Exception as e:
+                print(f"[MediaGenerator] Replicate FLUX error: {e}")
+
+        # 2. Fal.ai FLUX (If FAL_KEY is present)
+        if not image_url and settings.FAL_KEY:
+            try:
+                fal_endpoint = "https://fal.run/fal-ai/flux/schnell" if "schnell" in model else "https://fal.run/fal-ai/flux-pro"
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    resp = await client.post(
+                        fal_endpoint,
+                        headers={"Authorization": f"Key {settings.FAL_KEY}"},
+                        json={
+                            "prompt": prompt,
+                            "image_size": dims,
+                            "num_inference_steps": num_inference_steps,
+                            "enable_safety_checker": True
+                        }
+                    )
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        images = data.get("images", [])
+                        if images:
+                            image_url = images[0].get("url")
+            except Exception as e:
+                print(f"[MediaGenerator] Fal.ai FLUX error: {e}")
+
+        # 3. OpenAI DALL-E 3 (If configured)
+        if not image_url and settings.OPENAI_API_KEY and (model == "dall-e-3" or "dalle" in model):
+            try:
+                async with httpx.AsyncClient(timeout=45.0) as client:
                     openai_size = "1024x1024" if aspect_ratio == "1:1" else ("1792x1024" if aspect_ratio == "16:9" else "1024x1792")
                     resp = await client.post(
                         "https://api.openai.com/v1/images/generations",
@@ -80,57 +147,6 @@ class MediaGeneratorService:
                             image_url = data["data"][0].get("url")
             except Exception as e:
                 print(f"[MediaGenerator] OpenAI DALL-E 3 error: {e}")
-
-        # 2. Together AI FLUX (If TOGETHER_API_KEY is present)
-        if not image_url and settings.TOGETHER_API_KEY and ("flux" in model or "sd-xl" in model):
-            try:
-                together_model = "black-forest-labs/FLUX.1-schnell" if "schnell" in model else "black-forest-labs/FLUX.1-dev"
-                async with httpx.AsyncClient(timeout=60.0) as client:
-                    resp = await client.post(
-                        "https://api.together.xyz/v1/images/generations",
-                        headers={
-                            "Authorization": f"Bearer {settings.TOGETHER_API_KEY}",
-                            "Content-Type": "application/json"
-                        },
-                        json={
-                            "model": together_model,
-                            "prompt": prompt,
-                            "width": w,
-                            "height": h,
-                            "steps": min(num_inference_steps, 4 if "schnell" in model else 28),
-                            "n": 1,
-                            "response_format": "url"
-                        }
-                    )
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        if data.get("data") and len(data["data"]) > 0:
-                            image_url = data["data"][0].get("url")
-            except Exception as e:
-                print(f"[MediaGenerator] Together AI FLUX error: {e}")
-
-        # 3. Fal.ai (If FAL_KEY is present)
-        if not image_url and settings.FAL_KEY:
-            try:
-                fal_endpoint = "https://fal.run/fal-ai/flux/schnell" if "schnell" in model else "https://fal.run/fal-ai/flux-pro"
-                async with httpx.AsyncClient(timeout=60.0) as client:
-                    resp = await client.post(
-                        fal_endpoint,
-                        headers={"Authorization": f"Key {settings.FAL_KEY}"},
-                        json={
-                            "prompt": prompt,
-                            "image_size": dims,
-                            "num_inference_steps": num_inference_steps,
-                            "enable_safety_checker": True
-                        }
-                    )
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        images = data.get("images", [])
-                        if images:
-                            image_url = images[0].get("url")
-            except Exception as e:
-                print(f"[MediaGenerator] Fal.ai API error: {e}")
 
         # 4. Pollinations.ai Free Ultra FLUX Engine
         pollinations_model = "flux"
@@ -188,7 +204,7 @@ class MediaGeneratorService:
         self,
         prompt: str,
         negative_prompt: Optional[str] = None,
-        model: str = "wan-2.1",
+        model: str = "minimax-video",
         aspect_ratio: str = "16:9",
         duration_seconds: int = 5,
         fps: int = 24,
@@ -197,8 +213,7 @@ class MediaGeneratorService:
         camera_motion: Optional[str] = "360-orbit"
     ) -> Dict[str, Any]:
         """
-        Orchestrate video generation job (Wan 2.1, CogVideoX, Kling, Veo).
-        Generates photorealistic AI scene frames with full dynamic cinematic motion playback.
+        Orchestrate real video generation via Replicate Minimax Video-01 / Fal.ai Wan 2.1 / Kling 1.5 Pro.
         """
         start_time = time.time()
         file_id = f"vid_{uuid.uuid4().hex[:12]}"
@@ -208,12 +223,54 @@ class MediaGeneratorService:
         w, h = dims["width"], dims["height"]
         current_seed = random.randint(100000, 999999)
 
-        # 1. Cloud Video GPUs (Fal.ai Wan 2.1 / CogVideoX / Kling / Veo)
-        if settings.FAL_KEY and ("wan" in model or "cog" in model):
+        # 1. Replicate Minimax Video-01 (Higgsfield / Hailuo Cinematic Engine)
+        if not video_url and settings.REPLICATE_API_TOKEN:
             try:
-                async with httpx.AsyncClient(timeout=90.0) as client:
+                async with httpx.AsyncClient(timeout=60.0) as client:
+                    create_resp = await client.post(
+                        "https://api.replicate.com/v1/models/minimax/video-01/predictions",
+                        headers={
+                            "Authorization": f"Bearer {settings.REPLICATE_API_TOKEN}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "input": {
+                                "prompt": f"{prompt}, cinematic camera: {camera_motion}",
+                                "prompt_optimizer": True
+                            }
+                        }
+                    )
+                    if create_resp.status_code in [200, 201]:
+                        pred = create_resp.json()
+                        pred_id = pred.get("id")
+                        get_url = pred.get("urls", {}).get("get") or f"https://api.replicate.com/v1/predictions/{pred_id}"
+                        
+                        # Poll for video completion (up to 70 seconds)
+                        for _ in range(35):
+                            await asyncio.sleep(2)
+                            poll_resp = await client.get(get_url, headers={"Authorization": f"Bearer {settings.REPLICATE_API_TOKEN}"})
+                            if poll_resp.status_code == 200:
+                                poll_data = poll_resp.json()
+                                p_status = poll_data.get("status")
+                                if p_status == "succeeded":
+                                    output = poll_data.get("output")
+                                    if isinstance(output, str) and output.startswith("http"):
+                                        video_url = output
+                                    elif isinstance(output, list) and len(output) > 0:
+                                        video_url = output[0]
+                                    break
+                                elif p_status in ["failed", "canceled"]:
+                                    print(f"[MediaGenerator] Replicate video failed: {poll_data.get('error')}")
+                                    break
+            except Exception as e:
+                print(f"[MediaGenerator] Replicate Video-01 error: {e}")
+
+        # 2. Fal.ai Wan 2.1 / Kling / CogVideoX (If FAL_KEY is valid)
+        if not video_url and settings.FAL_KEY:
+            try:
+                async with httpx.AsyncClient(timeout=45.0) as client:
                     resp = await client.post(
-                        "https://fal.run/fal-ai/wan-2.1",
+                        "https://fal.run/fal-ai/wan-2.1/text-to-video",
                         headers={"Authorization": f"Key {settings.FAL_KEY}"},
                         json={
                             "prompt": prompt,
@@ -227,15 +284,14 @@ class MediaGeneratorService:
                         if video_info.get("url"):
                             video_url = video_info.get("url")
             except Exception as e:
-                print(f"[MediaGenerator] Video Fal.ai error: {e}")
+                print(f"[MediaGenerator] Fal.ai Video error: {e}")
 
-        # 2. Photorealistic AI Keyframe Engine for Cinematic Motion Video
+        # 3. High-Res Photorealistic AI Keyframe Engine (Instant Fallback)
         clean_motion = camera_motion or "cinematic camera"
         enriched_prompt = f"{prompt}, cinematic lighting, photorealistic 8k movie scene, {clean_motion}"
         encoded_prompt = urllib.parse.quote(enriched_prompt)
         keyframe_cdn_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?model=flux-realism&width={w}&height={h}&nologo=true&seed={current_seed}"
 
-        # Download the photorealistic AI frame locally
         img_filename = f"{file_id}_scene.jpg"
         img_saved_path = os.path.join(settings.MEDIA_STORAGE_DIR, img_filename)
         actual_frame_url = keyframe_cdn_url
