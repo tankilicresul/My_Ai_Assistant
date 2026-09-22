@@ -40,8 +40,15 @@ async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
-        # SQLite schema auto-migration for newly added columns
+        # SQLite performance & zero-cost concurrency tuning (WAL Mode)
         if "sqlite" in settings.DATABASE_URL:
+            try:
+                await conn.execute(text("PRAGMA journal_mode=WAL;"))
+                await conn.execute(text("PRAGMA busy_timeout=10000;"))
+                await conn.execute(text("PRAGMA synchronous=NORMAL;"))
+            except Exception:
+                pass
+            
             # Check existing columns on users table
             res = await conn.execute(text("PRAGMA table_info(users)"))
             existing_cols = {row[1] for row in res.fetchall()}

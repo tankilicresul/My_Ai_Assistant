@@ -170,7 +170,48 @@ class VectorMemoryService:
                         "meta_info": payload.get("meta_info", {})
                     })
             except Exception as e:
-                print(f"[VectorMemory] Search failed: {e}")
+                print(f"[VectorMemory] Qdrant search failed, using local engine: {e}")
+
+        # Local Zero-Cost Semantic & Keyword Fallback Engine (Runs without any external service)
+        if not results:
+            try:
+                from app.core.database import AsyncSessionLocal
+                from app.models.memory import UserMemory
+                from sqlalchemy import select
+                async with AsyncSessionLocal() as session:
+                    stmt = select(UserMemory).where(UserMemory.user_id == user_id)
+                    if category:
+                        stmt = stmt.where(UserMemory.category == category)
+                    db_res = await session.execute(stmt)
+                    all_mems = db_res.scalars().all()
+
+                    scored = []
+                    q_words = set(query.lower().split())
+                    for mem in all_mems:
+                        mem_vec = await self.get_embedding(mem.content)
+                        # Cosine similarity
+                        dot = sum(a * b for a, b in zip(vector, mem_vec))
+                        # Keyword overlap bonus
+                        mem_words = set(mem.content.lower().split())
+                        overlap = len(q_words.intersection(mem_words)) / max(len(q_words), 1)
+                        total_score = round(dot * 0.7 + overlap * 0.3, 4)
+
+                        scored.append((total_score, mem))
+
+                    scored.sort(key=lambda x: x[0], reverse=True)
+                    for score, mem in scored[:limit]:
+                        results.append({
+                            "id": str(mem.id),
+                            "user_id": mem.user_id,
+                            "category": mem.category,
+                            "key": mem.key,
+                            "content": mem.content,
+                            "importance_score": mem.importance_score,
+                            "similarity_score": score,
+                            "meta_info": mem.meta_info or {}
+                        })
+            except Exception as e:
+                print(f"[VectorMemory] Local memory fallback search error: {e}")
 
         return results
 

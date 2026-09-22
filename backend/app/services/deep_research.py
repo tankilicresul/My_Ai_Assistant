@@ -84,6 +84,9 @@ class DeepResearchService:
                         })
             except Exception:
                 pass
+
+        # 4. Deterministic academic fallback if completely offline
+        if not results:
             results = [
                 {
                     "title": f"{query} - Kapsamlı Endüstriyel Analiz ve Rapor",
