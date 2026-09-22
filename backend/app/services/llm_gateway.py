@@ -372,8 +372,23 @@ class LLMGateway:
         }
 
     def _simulate_smart_response(self, user_query: str) -> str:
+        import re
         q_lower = user_query.lower()
-        if any(w in q_lower for w in ["kod", "python", "javascript", "react", "fastapi", "html", "css", "fonksiyon", "function", "code", "bug"]):
+
+        # Check for podcast dialogue generation request
+        if "podcast" in q_lower or "ece" in q_lower or "kaan" in q_lower or "sunucu" in q_lower:
+            topic_match = re.search(r"konu:\s*([^\n\r]+)", user_query, re.IGNORECASE)
+            topic = topic_match.group(1).strip() if topic_match else "Gündem ve Teknoloji"
+            return (
+                f"Ece: Merhaba sevgili dinleyiciler! NexusAI Podcast Stüdyosu'na hoş geldiniz. Bugün masamızda oldukça çarpıcı bir konu var: {topic}. Kaan, sence bu durum neden bu kadar kritik bir hale geldi?\n"
+                f"Kaan: Selamlar Ece ve herkese merhaba. {topic} meselesi aslında sadece bugünün değil, geleceğin de en temel dinamiklerinden biri. Verilere ve son araştırmalara baktığımızda, sektördeki dönüşümün hızlandığını çok net görebiliyoruz.\n"
+                f"Ece: Kesinlikle katılıyorum. Özellikle pratik uygulamalar ve kullanıcı deneyimi tarafında yaşanan gelişmeler, geleneksel yaklaşımların hızla yerini yenilikçi çözümlere bıraktığını gösteriyor.\n"
+                f"Kaan: Kesinlikle Ece. Yapay zeka destekli süreçler ve modern altyapılar sayesinde hem verimlilik katlanıyor hem de hata payı minimuma iniyor. Bu alandaki adaptasyon hızı geleceği belirleyecek.\n"
+                f"Ece: Harika bir özet oldu Kaan! Sevgili dinleyicilerimiz, {topic} konusundaki değerlendirmelerimizin sonuna geldik. Bir sonraki bölümde görüşmek üzere, takipte kalın!"
+            )
+
+        # Code keywords
+        if any(re.search(rf"\b{w}\b", q_lower) for w in ["kod", "python", "javascript", "react", "fastapi", "html", "css", "fonksiyon", "function", "code", "bug"]):
             return (
                 f"Talebiniz incelendi: **\"{user_query}\"**\n\n"
                 "### 🛠️ Çözüm & Kod Mimarisi\n\n"
@@ -392,7 +407,7 @@ class LLMGateway:
                 "2. **Hata Yönetimi:** Beklenmeyen girdi tiplerine karşı korumalı yapı.\n"
                 "3. **Entegrasyon:** Claude Code Studio ve canlı web terminali ile doğrudan test edilebilir."
             )
-        elif any(w in q_lower for w in ["merhaba", "selam", "hello", "hi", "kimsin", "nasılsın"]):
+        elif any(re.search(rf"\b{w}\b", q_lower) for w in ["merhaba", "selam", "hello", "hi", "hey", "kimsin", "nasılsın"]):
             return (
                 "Merhaba! Ben **NexusAI** — ChatGPT, Claude Code, Gemini Deep Research, Higgsfield Medya Stüdyosu ve Vektör Hafıza yetenekleriyle donatılmış yapay zeka asistanınızım.\n\n"
                 "Bugün sizin için ne yapabilirim? (Kod yazımı, derin araştırma, görsel/video üretimi, dosya analizi veya podcast oluşturma konularında yardımcı olabilirim.)"

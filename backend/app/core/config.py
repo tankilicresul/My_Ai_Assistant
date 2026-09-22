@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     KLING_API_KEY: str = ""
     VEO_API_KEY: str = ""
 
+    # Voice & Audio APIs
+    ELEVENLABS_API_KEY: str = ""
+
     # Search APIs
     TAVILY_API_KEY: str = ""
     SERPER_API_KEY: str = ""
@@ -57,5 +60,10 @@ class Settings(BaseSettings):
 settings = Settings()
 
 # Ensure storage directories exist
-for path in [settings.SANDBOX_STORAGE_DIR, settings.MEDIA_STORAGE_DIR, settings.DOCUMENT_STORAGE_DIR]:
+for path in [
+    settings.SANDBOX_STORAGE_DIR,
+    settings.MEDIA_STORAGE_DIR,
+    os.path.join(settings.MEDIA_STORAGE_DIR, "podcasts"),
+    settings.DOCUMENT_STORAGE_DIR
+]:
     os.makedirs(path, exist_ok=True)
