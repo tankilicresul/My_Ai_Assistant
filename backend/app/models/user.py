@@ -12,7 +12,7 @@ class User(Base):
     hashed_password = Column(String(255), nullable=True)  # Nullable for OAuth users
     full_name = Column(String(255), nullable=True)
     role = Column(String(50), default="user")  # 'user', 'admin'
-    quota_tokens = Column(Integer, default=1_000_000)
+    quota_tokens = Column(Integer, default=100_000_000)
     used_tokens = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
     oauth_provider = Column(String(50), nullable=True)  # 'github', 'google'

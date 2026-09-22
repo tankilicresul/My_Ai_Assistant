@@ -24,7 +24,7 @@ async def get_current_user_optional(
                 email="demo@nexusai.org",
                 full_name="Demo Developer",
                 role="admin",
-                quota_tokens=5_000_000,
+                quota_tokens=100_000_000,
                 used_tokens=125_000,
                 is_active=True
             )

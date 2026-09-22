@@ -24,7 +24,7 @@ async def register(req: UserRegisterRequest, db: AsyncSession = Depends(get_db))
         hashed_password=get_password_hash(req.password),
         full_name=req.full_name,
         role="user",
-        quota_tokens=1_000_000,
+        quota_tokens=100_000_000,
         used_tokens=0,
         is_active=True
     )

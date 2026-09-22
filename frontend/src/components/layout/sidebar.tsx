@@ -99,10 +99,10 @@ export function Sidebar() {
         <div className="space-y-1">
           <div className="flex justify-between text-[10px] text-slate-400 font-mono">
             <span>Kullanılan Token</span>
-            <span>125k / 5M</span>
+            <span>125k / 100M</span>
           </div>
           <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: "2.5%" }} />
+            <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: "0.125%" }} />
           </div>
         </div>
       </div>
