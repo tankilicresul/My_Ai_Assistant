@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.core.database import get_db
 from app.models.user import User
 from app.models.conversation import Conversation, Message
@@ -28,7 +29,12 @@ async def list_conversations(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    stmt = select(Conversation).where(Conversation.user_id == user.id).order_by(Conversation.updated_at.desc())
+    stmt = (
+        select(Conversation)
+        .options(selectinload(Conversation.messages))
+        .where(Conversation.user_id == user.id)
+        .order_by(Conversation.updated_at.desc())
+    )
     res = await db.execute(stmt)
     conversations = res.scalars().all()
     return conversations
@@ -56,12 +62,17 @@ async def get_conversation(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    stmt = select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)
+    stmt = (
+        select(Conversation)
+        .options(selectinload(Conversation.messages))
+        .where(Conversation.id == conversation_id, Conversation.user_id == user.id)
+    )
     res = await db.execute(stmt)
     conv = res.scalar_one_or_none()
     if not conv:
         raise HTTPException(status_code=404, detail="Sohbet bulunamadı.")
     return conv
+
 
 @router.delete("/conversations/{conversation_id}")
 async def delete_conversation(

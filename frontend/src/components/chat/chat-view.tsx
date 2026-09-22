@@ -66,9 +66,32 @@ export function ChatView() {
 
   useEffect(() => {
     if (activeConvId && !isArenaMode) {
+      // First load from localStorage cache for instant UI if available
+      try {
+        const cached = localStorage.getItem(`nexus_chat_${activeConvId}`);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setMessages(parsed);
+          }
+        }
+      } catch (err) {
+        console.error("Local cache read error", err);
+      }
+      localStorage.setItem("nexus_active_conv_id", activeConvId);
       loadConversationMessages(activeConvId);
     }
   }, [activeConvId, isArenaMode]);
+
+  useEffect(() => {
+    if (activeConvId && messages.length > 0) {
+      try {
+        localStorage.setItem(`nexus_chat_${activeConvId}`, JSON.stringify(messages));
+      } catch (err) {
+        console.error("Local cache write error", err);
+      }
+    }
+  }, [messages, activeConvId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -87,7 +110,10 @@ export function ChatView() {
     try {
       const data = await ApiClient.getConversations();
       setConversations(data);
-      if (data.length > 0 && !activeConvId) {
+      const savedConvId = typeof window !== "undefined" ? localStorage.getItem("nexus_active_conv_id") : null;
+      if (savedConvId && data.some((c: any) => c.id === savedConvId)) {
+        setActiveConvId(savedConvId);
+      } else if (data.length > 0 && !activeConvId) {
         setActiveConvId(data[0].id);
       }
     } catch (e) {
@@ -98,8 +124,13 @@ export function ChatView() {
   const loadConversationMessages = async (id: string) => {
     try {
       const data = await ApiClient.getConversation(id);
-      setMessages(data.messages || []);
-      if (data.model) setSelectedModel(data.model);
+      if (data && data.messages) {
+        setMessages(data.messages);
+        try {
+          localStorage.setItem(`nexus_chat_${id}`, JSON.stringify(data.messages));
+        } catch (e) {}
+      }
+      if (data && data.model) setSelectedModel(data.model);
     } catch (e) {
       console.error(e);
     }
@@ -115,6 +146,7 @@ export function ChatView() {
       setConversations([newConv, ...conversations]);
       setActiveConvId(newConv.id);
       setMessages([]);
+      localStorage.setItem("nexus_active_conv_id", newConv.id);
     } catch (e) {
       console.error(e);
     }
@@ -124,11 +156,20 @@ export function ChatView() {
     e.stopPropagation();
     try {
       await ApiClient.deleteConversation(id);
+      try {
+        localStorage.removeItem(`nexus_chat_${id}`);
+      } catch (e) {}
       const remaining = conversations.filter((c) => c.id !== id);
       setConversations(remaining);
       if (activeConvId === id) {
-        setActiveConvId(remaining.length > 0 ? remaining[0].id : null);
+        const nextId = remaining.length > 0 ? remaining[0].id : null;
+        setActiveConvId(nextId);
         setMessages([]);
+        if (nextId) {
+          localStorage.setItem("nexus_active_conv_id", nextId);
+        } else {
+          localStorage.removeItem("nexus_active_conv_id");
+        }
       }
     } catch (e) {
       console.error(e);
