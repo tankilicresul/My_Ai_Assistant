@@ -128,4 +128,10 @@ export class ApiClient {
   static getTokenUsage = () => this.request<any[]>("/admin/tokens/by-model");
   static getAdminUsers = () => this.request<any[]>("/admin/users");
   static getAuditLogs = () => this.request<any[]>("/admin/logs");
+
+  // Voice, Podcast & Arena APIs
+  static generatePodcast = (data: any) => this.request<any>("/voice/podcast", { method: "POST", body: JSON.stringify(data) });
+  static runArena = (data: any) => this.request<any>("/voice/arena", { method: "POST", body: JSON.stringify(data) });
+  static speakText = (data: any) => this.request<any>("/voice/speak", { method: "POST", body: JSON.stringify(data) });
+
 }

@@ -15,7 +15,8 @@ import {
   Home,
   LogOut,
   ChevronRight,
-  HardDrive
+  HardDrive,
+  Radio
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -23,6 +24,7 @@ import { cn } from "../../lib/utils";
 export const navigationItems = [
   { name: "Sohbet (ChatGPT)", href: "/chat", icon: MessageSquare, badge: "Multi-LLM" },
   { name: "Claude Code IDE", href: "/code", icon: Code2, badge: "Terminal" },
+  { name: "Voice & Podcast AI", href: "/podcast", icon: Radio, badge: "NotebookLM" },
   { name: "Medya Stüdyosu", href: "/studio", icon: Sparkles, badge: "Flux & Wan" },
   { name: "Deep Research", href: "/research", icon: Compass, badge: "Gemini" },
   { name: "Vektör Hafıza", href: "/memory", icon: Database, badge: "Qdrant" },

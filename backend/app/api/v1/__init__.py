@@ -8,6 +8,7 @@ from app.api.v1.memory import router as memory_router
 from app.api.v1.files import router as files_router
 from app.api.v1.agents import router as agents_router
 from app.api.v1.admin import router as admin_router
+from app.api.v1.voice import router as voice_router
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -20,3 +21,5 @@ api_router.include_router(memory_router)
 api_router.include_router(files_router)
 api_router.include_router(agents_router)
 api_router.include_router(admin_router)
+api_router.include_router(voice_router)
+
