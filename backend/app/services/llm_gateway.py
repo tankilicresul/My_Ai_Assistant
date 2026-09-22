@@ -187,12 +187,31 @@ class LLMGateway:
             "qwen/qwen-2.5-coder-32b-instruct": "qwen-coder",
             "meta-llama/Llama-3.3-70B-Instruct": "mistral"
         }
-        target_model = model_map.get(model, "openai")
+        target_model = model_map.get(model, "openai-fast")
         
-        # 1. Try Pollinations JSON Chat Endpoint (Fast 8s timeout)
+        # 1. Try Pollinations Direct POST (Fast 3.5s timeout)
         try:
             import httpx
-            async with httpx.AsyncClient(timeout=8.0) as client:
+            async with httpx.AsyncClient(timeout=3.5) as client:
+                resp = await client.post(
+                    "https://text.pollinations.ai/",
+                    json={
+                        "messages": messages,
+                        "model": target_model,
+                        "seed": 42
+                    }
+                )
+                if resp.status_code == 200 and resp.text:
+                    txt = resp.text.strip()
+                    if not txt.startswith('{"error":') and len(txt) > 0:
+                        return txt
+        except Exception:
+            pass
+
+        # 2. Try Pollinations JSON OpenAI Endpoint (Fast 3.0s timeout)
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=3.0) as client:
                 resp = await client.post(
                     "https://text.pollinations.ai/openai",
                     json={
@@ -208,21 +227,23 @@ class LLMGateway:
                         content = choices[0]["message"].get("content", "")
                         if content and len(content.strip()) > 0:
                             return content.strip()
-        except Exception as e:
+        except Exception:
             pass
 
-        # 2. Try Pollinations Direct Query Endpoint (Fast 6s timeout)
+        # 3. Try Pollinations Direct Query Endpoint (Fast 2.5s timeout)
         try:
             import httpx
             import urllib.parse
             last_prompt = messages[-1]["content"] if messages else ""
             if last_prompt:
-                encoded_prompt = urllib.parse.quote(last_prompt[:1500])
-                async with httpx.AsyncClient(timeout=6.0) as client:
-                    resp = await client.get(f"https://text.pollinations.ai/{encoded_prompt}?model={target_model}")
-                    if resp.status_code == 200 and resp.text and len(resp.text.strip()) > 0:
-                        return resp.text.strip()
-        except Exception as e:
+                encoded_prompt = urllib.parse.quote(last_prompt[:1200])
+                async with httpx.AsyncClient(timeout=2.5) as client:
+                    resp = await client.get(f"https://text.pollinations.ai/{encoded_prompt}?model=openai-fast")
+                    if resp.status_code == 200 and resp.text:
+                        txt = resp.text.strip()
+                        if not txt.startswith('{"error":') and len(txt) > 0:
+                            return txt
+        except Exception:
             pass
 
         return None
