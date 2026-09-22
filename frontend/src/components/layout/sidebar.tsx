@@ -128,7 +128,7 @@ export function Sidebar() {
               <Zap className="w-5 h-5 text-white fill-white" />
             </div>
             {!isCollapsed && (
-              <span className="font-extrabold text-lg tracking-tight text-slate-900 truncate">
+              <span className="font-extrabold text-lg tracking-tight text-slate-900 whitespace-nowrap">
                 TanCore<span className="text-orange-600">Lab</span>
               </span>
             )}
@@ -187,7 +187,7 @@ export function Sidebar() {
                       isActive ? "text-orange-600" : "text-slate-400 group-hover:text-slate-700"
                     )}
                   />
-                  {!isCollapsed && <span className="truncate">{item.name}</span>}
+                  {!isCollapsed && <span className="break-words leading-tight">{item.name}</span>}
                 </div>
                 {!isCollapsed && (
                   <span
@@ -218,10 +218,10 @@ export function Sidebar() {
                 </div>
                 {!isCollapsed && (
                   <div className="overflow-hidden">
-                    <p className="text-xs font-semibold text-slate-800 truncate group-hover:text-orange-600 transition-colors">
+                    <p className="text-xs font-semibold text-slate-800 break-words group-hover:text-orange-600 transition-colors">
                       {displayName}
                     </p>
-                    <p className="text-[10px] text-orange-600 font-medium truncate">{displayRole}</p>
+                    <p className="text-[10px] text-orange-600 font-medium break-words">{displayRole}</p>
                   </div>
                 )}
               </Link>

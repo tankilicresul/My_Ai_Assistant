@@ -400,10 +400,10 @@ export function ChatView() {
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent"
               )}
             >
-              <span className="truncate pr-2">{c.title || "İsimsiz Sohbet"}</span>
+              <span className="break-words leading-snug pr-2 text-left flex-1">{c.title || "İsimsiz Sohbet"}</span>
               <button
                 onClick={(e) => handleDeleteChat(c.id, e)}
-                className="opacity-0 group-hover:opacity-100 hover:text-rose-600 p-1 transition-opacity"
+                className="opacity-0 group-hover:opacity-100 hover:text-rose-600 p-1 transition-opacity shrink-0"
                 title="Sohbeti Sil"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -635,7 +635,7 @@ export function ChatView() {
                             </div>
                           )}
 
-                          <div className={cn("prose prose-xs max-w-none", isUser ? "text-white prose-invert" : "text-slate-800")}>
+                          <div className={cn("prose prose-xs max-w-none break-words", isUser ? "text-white prose-invert" : "text-slate-800")}>
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                               {m.content}
                             </ReactMarkdown>

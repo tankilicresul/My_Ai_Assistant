@@ -8,14 +8,11 @@ import {
   Trash2,
   Brain,
   Star,
-  Tag,
-  Layers,
-  Sparkles,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from "lucide-react";
 import { ApiClient } from "../../lib/api-client";
 import { cn } from "../../lib/utils";
-
 
 export function MemoryView() {
   const [memories, setMemories] = useState<any[]>([]);
@@ -101,22 +98,24 @@ export function MemoryView() {
     : memories.filter((m) => m.category === selectedCategory);
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8 text-slate-200">
+    <div className="p-6 sm:p-8 max-w-6xl mx-auto space-y-8 text-slate-800">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-extrabold text-white flex items-center space-x-2">
-            <Database className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-black text-slate-900 flex items-center space-x-2.5">
+            <div className="w-9 h-9 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600">
+              <Database className="w-5 h-5" />
+            </div>
             <span>Kişisel Vektör Hafıza Motoru</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Qdrant Vector DB destekli uzun vadeli hafıza. Tüm AI sohbetleriniz ve agentlarınız bu hafızaya anlık erişir.
+          <p className="text-xs text-slate-500 mt-1">
+            Qdrant Vector DB destekli uzun vadeli hafıza. Tüm AI sohbetleriniz ve ajanlarınız bu hafızaya anlık erişir.
           </p>
         </div>
 
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center space-x-2 shadow-lg shadow-emerald-600/20 transition-all"
+          className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-xs flex items-center space-x-2 shadow-md shadow-orange-500/20 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>Yeni Hafıza Kaydı</span>
@@ -125,19 +124,19 @@ export function MemoryView() {
 
       {/* Add Memory Drawer / Modal */}
       {isAdding && (
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-700 space-y-4 shadow-xl">
-          <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-            <Brain className="w-4 h-4 text-emerald-400" />
+        <div className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 space-y-4 shadow-xl">
+          <h3 className="text-sm font-black text-slate-900 flex items-center space-x-2">
+            <Brain className="w-4 h-4 text-orange-600" />
             <span>Yeni Vektörel Hafıza Ekle</span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="text-xs text-slate-400 block mb-1">Kategori</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Kategori</label>
               <select
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-orange-500"
               >
                 <option value="preference">Kullanıcı Tercihi</option>
                 <option value="project">Aktif Proje / Teknoloji</option>
@@ -148,18 +147,18 @@ export function MemoryView() {
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 block mb-1">Anahtar / Başlık (Opsiyonel)</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Anahtar / Başlık (Opsiyonel)</label>
               <input
                 type="text"
                 value={newKey}
                 onChange={(e) => setNewKey(e.target.value)}
                 placeholder="Örn: Frontend Tercihi, Şirket Pozisyonu..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-orange-500"
               />
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 block mb-1">Önem Derecesi (1.0 - 5.0)</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Önem Derecesi (1.0 - 5.0)</label>
               <input
                 type="number"
                 step="0.5"
@@ -167,32 +166,32 @@ export function MemoryView() {
                 max="5.0"
                 value={importance}
                 onChange={(e) => setImportance(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-xs text-slate-800 font-mono font-bold focus:outline-none focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-xs text-slate-400 block mb-1">Hafıza İçeriği / Açıklama</label>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Hafıza İçeriği / Açıklama</label>
             <textarea
               value={newContent}
               onChange={(e) => setNewContent(e.target.value)}
               placeholder="Örn: Next.js 14 App Router ve TailwindCSS kullanmayı tercih ediyorum. Backend olarak FastAPI ve PostgreSQL mimarilerine odaklanıyorum."
               rows={3}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none resize-none"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-800 focus:outline-none focus:border-orange-500 resize-none leading-relaxed"
             />
           </div>
 
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end space-x-2 pt-2">
             <button
               onClick={() => setIsAdding(false)}
-              className="px-4 py-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white text-xs"
+              className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-semibold"
             >
               İptal
             </button>
             <button
               onClick={handleAddMemory}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs"
+              className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20"
             >
               Vektör Veritabanına Kaydet
             </button>
@@ -210,28 +209,28 @@ export function MemoryView() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="Qdrant semantik araması yapın (Örn: 'Frontend tercihlerim neler?')..."
-            className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-xl pl-11 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
+            className="w-full bg-white border border-slate-200 focus:border-orange-500 rounded-2xl pl-11 pr-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none shadow-xs"
           />
         </div>
         <button
           onClick={handleSearch}
-          className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold"
+          className="px-5 py-2.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold border border-slate-200 shadow-xs"
         >
           {loading ? "Aranıyor..." : "Semantik Ara"}
         </button>
       </div>
 
       {/* Categories Tabs */}
-      <div className="flex items-center space-x-2 border-b border-slate-800 pb-2 overflow-x-auto">
+      <div className="flex items-center space-x-2 border-b border-slate-200 pb-3 overflow-x-auto">
         {categories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
             className={cn(
-              "px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap",
+              "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap",
               selectedCategory === cat.id
-                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-50"
             )}
           >
             {cat.label}
@@ -244,34 +243,35 @@ export function MemoryView() {
         {filteredMemories.map((m) => (
           <div
             key={m.id}
-            className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-emerald-500/30 transition-all flex flex-col justify-between space-y-3 group"
+            className="p-5 rounded-3xl bg-white border border-slate-200 hover:border-orange-400 hover:shadow-sm transition-all flex flex-col justify-between space-y-3 group"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase">
+                <span className="font-mono text-[10px] px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200 font-bold uppercase">
                   {m.category}
                 </span>
                 <div className="flex items-center space-x-2">
                   {m.similarity_score && (
-                    <span className="text-[10px] font-mono text-cyan-400">
+                    <span className="text-[10px] font-mono text-emerald-700 font-bold">
                       Benzerlik: %{(m.similarity_score * 100).toFixed(0)}
                     </span>
                   )}
                   <button
                     onClick={() => handleDelete(m.id)}
-                    className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-red-400 transition-opacity"
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-600 transition-opacity p-1 rounded-lg"
+                    title="Sil"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
 
-              {m.key && <h4 className="text-xs font-bold text-white mb-1">{m.key}</h4>}
-              <p className="text-xs text-slate-300 leading-relaxed">{m.content}</p>
+              {m.key && <h4 className="text-xs font-black text-slate-900 mb-1">{m.key}</h4>}
+              <p className="text-xs text-slate-600 leading-relaxed">{m.content}</p>
             </div>
 
-            <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-2 border-t border-slate-800/60">
-              <span>Önem: {m.importance_score}★</span>
+            <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-3 border-t border-slate-100">
+              <span className="font-bold text-amber-600">Önem: {m.importance_score}★</span>
               <span>{new Date(m.created_at).toLocaleDateString("tr-TR")}</span>
             </div>
           </div>
@@ -279,7 +279,7 @@ export function MemoryView() {
       </div>
 
       {filteredMemories.length === 0 && (
-        <div className="p-12 text-center text-slate-500 italic text-xs bg-slate-900/30 rounded-2xl border border-slate-800">
+        <div className="p-12 text-center text-slate-400 italic text-xs bg-white rounded-3xl border border-slate-200">
           Kayıtlı hafıza girdisi bulunamadı.
         </div>
       )}

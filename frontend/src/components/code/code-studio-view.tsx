@@ -233,7 +233,7 @@ export function CodeStudioView() {
                 ) : (
                   <FileCode className="w-3.5 h-3.5 text-orange-500 shrink-0" />
                 )}
-                <span className="truncate">{item.name}</span>
+                <span className="break-all leading-tight">{item.name}</span>
               </div>
             ))}
             {fileTree.length === 0 && (
