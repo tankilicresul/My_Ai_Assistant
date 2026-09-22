@@ -22,15 +22,15 @@ import { cn } from "../../lib/utils";
 
 
 export const navigationItems = [
-  { name: "Sohbet (ChatGPT)", href: "/chat", icon: MessageSquare, badge: "Multi-LLM" },
-  { name: "Claude Code IDE", href: "/code", icon: Code2, badge: "Terminal" },
-  { name: "Voice & Podcast AI", href: "/podcast", icon: Radio, badge: "NotebookLM" },
-  { name: "Medya Stüdyosu", href: "/studio", icon: Sparkles, badge: "Flux & Wan" },
-  { name: "Deep Research", href: "/research", icon: Compass, badge: "Gemini" },
-  { name: "Vektör Hafıza", href: "/memory", icon: Database, badge: "Qdrant" },
-  { name: "Dosya & Veri Analizi", href: "/files", icon: FileSpreadsheet, badge: "PDF/Excel" },
-  { name: "Agent Marketplace", href: "/marketplace", icon: Bot, badge: "Custom" },
-  { name: "Yönetim & Maliyet", href: "/admin", icon: ShieldAlert, badge: "Admin" },
+  { name: "Yapay Zeka Sohbeti", href: "/chat", icon: MessageSquare, badge: "Çoklu LLM" },
+  { name: "Kodlama Stüdyosu & IDE", href: "/code", icon: Code2, badge: "Terminal" },
+  { name: "Sesli Asistan & Podcast", href: "/podcast", icon: Radio, badge: "Sesli AI" },
+  { name: "Görsel & Video Stüdyosu", href: "/studio", icon: Sparkles, badge: "Medya AI" },
+  { name: "Derin Web Araştırması", href: "/research", icon: Compass, badge: "Araştırma" },
+  { name: "Vektörel Bellek & Hafıza", href: "/memory", icon: Database, badge: "Hafıza" },
+  { name: "Dosya & Doküman Analizi", href: "/files", icon: FileSpreadsheet, badge: "PDF & Excel" },
+  { name: "Yapay Zeka Ajan Pazarı", href: "/marketplace", icon: Bot, badge: "Ajanlar" },
+  { name: "Yönetim & Sistem Paneli", href: "/admin", icon: ShieldAlert, badge: "Yönetici" },
 ];
 
 export function Sidebar() {
