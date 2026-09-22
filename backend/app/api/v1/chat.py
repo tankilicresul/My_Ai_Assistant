@@ -53,8 +53,13 @@ async def create_conversation(
     )
     db.add(conv)
     await db.commit()
-    await db.refresh(conv)
-    return conv
+    stmt = (
+        select(Conversation)
+        .options(selectinload(Conversation.messages))
+        .where(Conversation.id == conv.id)
+    )
+    res = await db.execute(stmt)
+    return res.scalar_one()
 
 @router.get("/conversations/{conversation_id}", response_model=ConversationResponse)
 async def get_conversation(
@@ -106,7 +111,6 @@ async def send_message(
         )
         db.add(conv)
         await db.commit()
-        await db.refresh(conv)
         conv_id = conv.id
     else:
         stmt = select(Conversation).where(Conversation.id == conv_id, Conversation.user_id == user.id)

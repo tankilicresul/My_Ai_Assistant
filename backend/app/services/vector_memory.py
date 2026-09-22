@@ -23,7 +23,8 @@ class VectorMemoryService:
             self.client = QdrantClient(
                 url=self.qdrant_url,
                 api_key=self.api_key if self.api_key else None,
-                timeout=5.0
+                timeout=1.5,
+                check_compatibility=False
             )
             # Create collections if they don't exist
             self._ensure_collection(settings.QDRANT_COLLECTION_MEMORIES, vector_size=1536)
@@ -149,15 +150,26 @@ class VectorMemoryService:
 
                 query_filter = models.Filter(must=conditions)
 
-                search_result = self.client.search(
-                    collection_name=settings.QDRANT_COLLECTION_MEMORIES,
-                    query_vector=vector,
-                    query_filter=query_filter,
-                    limit=limit,
-                    score_threshold=min_score
-                )
+                hits = []
+                if hasattr(self.client, "query_points"):
+                    query_res = self.client.query_points(
+                        collection_name=settings.QDRANT_COLLECTION_MEMORIES,
+                        query=vector,
+                        query_filter=query_filter,
+                        limit=limit,
+                        score_threshold=min_score
+                    )
+                    hits = getattr(query_res, "points", [])
+                elif hasattr(self.client, "search"):
+                    hits = self.client.search(
+                        collection_name=settings.QDRANT_COLLECTION_MEMORIES,
+                        query_vector=vector,
+                        query_filter=query_filter,
+                        limit=limit,
+                        score_threshold=min_score
+                    )
 
-                for hit in search_result:
+                for hit in hits:
                     payload = hit.payload or {}
                     results.append({
                         "id": str(hit.id),
