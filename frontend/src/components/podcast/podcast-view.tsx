@@ -97,8 +97,8 @@ export function PodcastView() {
       {/* Header */}
       <div className="max-w-6xl mx-auto w-full mb-6">
         <div className="flex items-center space-x-3 mb-1">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-orange-600 flex items-center justify-center shadow-md shadow-orange-500/20 text-white">
-            <Radio className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-amber-50/50 p-0.5">
+            <img src="/icons/podcast.jpg" alt="Podcast Stüdyosu" className="w-full h-full object-cover rounded-[12px]" />
           </div>
           <div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">

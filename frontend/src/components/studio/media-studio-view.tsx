@@ -129,8 +129,8 @@ export function MediaStudioView() {
       {/* Top Header */}
       <div className="h-16 border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between bg-white/90 backdrop-blur-md">
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-orange-600 flex items-center justify-center shadow-md shadow-orange-500/20 text-white">
-            <Sparkles className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl overflow-hidden shadow-sm border border-slate-200/80 bg-amber-50/50 p-0.5">
+            <img src="/icons/studio.png" alt="Medya Stüdyosu" className="w-full h-full object-cover rounded-[8px]" />
           </div>
           <div>
             <h1 className="text-sm sm:text-base font-bold text-slate-900">Görsel & Video Medya Stüdyosu</h1>
