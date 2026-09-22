@@ -1,13 +1,14 @@
 const getApiBaseUrl = (): string => {
-  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || "https://my-ai-assistant-zmc3.onrender.com";
   if (envUrl && envUrl.trim() !== "") {
     const clean = envUrl.trim().replace(/\/+$/, "").replace(/\/api\/v1$/, "");
     return `${clean}/api/v1`;
   }
-  return "/api/v1";
+  return "https://my-ai-assistant-zmc3.onrender.com/api/v1";
 };
 
 const API_BASE_URL = getApiBaseUrl();
+
 
 export class ApiClient {
   private static getToken(): string | null {
