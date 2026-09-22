@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --background: #090d16;
-    --foreground: #f8fafc;
-    --card: #0f172a;
-    --card-foreground: #f8fafc;
-    --border: #1e293b;
-    --input: #1e293b;
-    --ring: #6366f1;
+    --background: #f8f9fc;
+    --foreground: #1e293b;
+    --card: #ffffff;
+    --card-foreground: #1e293b;
+    --border: #e2e8f0;
+    --input: #f1f5f9;
+    --ring: #ff6b00;
   }
 }
 
@@ -21,41 +21,54 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom modern scrollbar */
+/* Custom modern scrollbar for warm theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94a3b8;
 }
 
-/* Glassmorphism effects */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* TanCoreLab Gradient and Utility Classes */
+.tancore-gradient {
+  background: linear-gradient(135deg, #ffa200 0%, #ff7500 50%, #ff4800 100%);
 }
 
-.glass-card {
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.tancore-gradient-subtle {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  background: linear-gradient(135deg, #ff9800 0%, #ff6d00 50%, #ff3d00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.neon-glow {
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+.tancore-btn {
+  background: linear-gradient(135deg, #ffa000 0%, #ff6a00 100%);
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+.tancore-btn:hover {
+  background: linear-gradient(135deg, #ff9000 0%, #e65a00 100%);
+  box-shadow: 0 10px 25px -5px rgba(255, 107, 0, 0.35);
+}
+
+/* Glass and Card styling */
+.tancore-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+.tancore-glow {
+  box-shadow: 0 0 30px rgba(255, 107, 0, 0.2);
 }

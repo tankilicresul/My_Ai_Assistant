@@ -12,24 +12,25 @@ import {
   ShieldAlert,
   ArrowRight,
   Zap,
-  Terminal,
-  Cpu,
   Radio,
   User as UserIcon,
   LogIn,
   UserPlus,
+  Flame,
+  Globe,
+  Crown,
 } from "lucide-react";
 import { useAuth } from "../context/auth-context";
 
 export default function HomePage() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const modules = [
     {
       title: "1. Çoklu Yapay Zeka Sohbeti",
       description: "GPT-4o, Claude 3.7, Gemini 2.0, DeepSeek R1 ve Llama ile sohbet, sesli iletişim, Multi-Model Arena ve canlı Canvas.",
       icon: MessageSquare,
       href: "/chat",
-      color: "from-blue-500 to-indigo-600",
+      color: "from-amber-400 to-orange-500",
       badge: "Çoklu Model",
     },
     {
@@ -37,7 +38,7 @@ export default function HomePage() {
       description: "VS Code Monaco editörü, Linux web terminali, Claude Code otonom kod geliştirici ve otomatik test üretimi.",
       icon: Code2,
       href: "/code",
-      color: "from-purple-500 to-pink-600",
+      color: "from-orange-500 to-rose-500",
       badge: "IDE & Terminal",
     },
     {
@@ -45,91 +46,107 @@ export default function HomePage() {
       description: "NotebookLM tarzı 2 yapay zeka sunuculu interaktif sesli podcast üretimi ve gerçek zamanlı Türkçe sesli asistan.",
       icon: Radio,
       href: "/podcast",
-      color: "from-amber-500 to-rose-600",
-      badge: "Sesli Yapay Zeka",
+      color: "from-amber-500 to-orange-600",
+      badge: "Sesli AI",
     },
     {
       title: "4. Görsel & Video Stüdyosu",
       description: "FLUX 1.0, SDXL, Wan 2.1 ve CogVideo ile Higgsfield Seedance 2.0 sinematik kamera açılı görsel ve video üretimi.",
       icon: Sparkles,
       href: "/studio",
-      color: "from-pink-500 to-rose-600",
-      badge: "Medya & Video",
+      color: "from-orange-400 to-pink-500",
+      badge: "Medya AI",
     },
     {
       title: "5. Derin Web Araştırması",
       description: "Gemini Deep Research ve Perplexity tarzı çok adımlı otonom web taraması, kaynak doğrulama ve detaylı raporlama.",
       icon: Compass,
       href: "/research",
-      color: "from-cyan-500 to-blue-600",
-      badge: "Otonom Araştırma",
+      color: "from-amber-500 to-teal-500",
+      badge: "Araştırma",
     },
     {
       title: "6. Vektörel Bellek & Hafıza",
       description: "Qdrant vektör veritabanı ve Mem0 mimarisi ile kullanıcı tercihleri, deneyimler ve projelerin kalıcı hatırlanması.",
       icon: Database,
       href: "/memory",
-      color: "from-emerald-500 to-teal-600",
-      badge: "Akıllı Hafıza",
+      color: "from-emerald-400 to-teal-600",
+      badge: "Hafıza",
     },
     {
       title: "7. Dosya & Doküman Analizi",
       description: "Julius AI tarzı PDF, Excel (XLSX), Word ve CSV dosyalarını doğal dille analiz etme, grafik çizdirme ve doküman üretimi.",
       icon: FileSpreadsheet,
       href: "/files",
-      color: "from-amber-500 to-orange-600",
-      badge: "PDF / Excel / CSV",
+      color: "from-amber-400 to-orange-500",
+      badge: "PDF / Excel",
     },
     {
       title: "8. Yapay Zeka Ajan Pazarı",
       description: "Özelleştirilmiş yazılım mimarı, finans uzmanı, e-ticaret ve veri analizi otonom ajanlarını çalıştırma ve yönetme.",
       icon: Bot,
       href: "/marketplace",
-      color: "from-violet-500 to-purple-700",
-      badge: "Otonom Ajanlar",
+      color: "from-orange-500 to-purple-600",
+      badge: "Ajanlar",
     },
     {
       title: "9. Yönetim & Sistem Paneli",
       description: "Sistem kullanım istatistikleri, model bazında token tüketimi, tahmini API maliyetleri ve güvenlik audit logları.",
       icon: ShieldAlert,
       href: "/admin",
-      color: "from-red-500 to-orange-600",
-      badge: "Yönetici Paneli",
+      color: "from-rose-500 to-orange-500",
+      badge: "Yönetici",
     },
   ];
 
   return (
-    <div className="flex-1 flex flex-col justify-between">
-      {/* Navbar */}
-      <header className="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md sticky top-0 z-50">
+    <div className="flex-1 flex flex-col justify-between bg-[#F8F9FB] min-h-screen">
+      {/* Navbar (TanCoreLab Top Bar) */}
+      <header className="border-b border-slate-200 bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-xs">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <Zap className="w-6 h-6 text-white" />
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center shadow-md shadow-orange-500/20">
+              <Zap className="w-5 h-5 text-white fill-white" />
             </div>
             <div>
-              <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
-                NexusAI
-              </span>
-              <span className="text-[10px] ml-2 px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">
-                v1.0 Enterprise
+              <span className="font-extrabold text-xl tracking-tight text-slate-900">
+                TanCore<span className="text-orange-600">Lab</span>
               </span>
             </div>
           </div>
 
+          {/* Center / Right Badges & Actions */}
           <div className="flex items-center space-x-3">
+            {/* 5 days streak */}
+            <div className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#FFF3E8] border border-[#FFD8B8] text-[#FF6B00] text-xs font-bold shadow-xs">
+              <Flame className="w-3.5 h-3.5 fill-[#FF6B00]" />
+              <span>5 days</span>
+            </div>
+
+            {/* EN pill */}
+            <div className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#FFF8F0] border border-[#FFE2CC] text-[#D96B00] text-xs font-bold shadow-xs">
+              <Globe className="w-3.5 h-3.5" />
+              <span>EN</span>
+            </div>
+
+            {/* Plus pill */}
+            <div className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-[#FFA200] to-[#FF6B00] text-white text-xs font-extrabold shadow-sm shadow-orange-500/20">
+              <Crown className="w-3.5 h-3.5 fill-white" />
+              <span>Plus</span>
+            </div>
+
             {isAuthenticated ? (
               <>
                 <Link
                   href="/profile"
-                  className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-medium border border-slate-700/60 flex items-center space-x-2 transition-all"
+                  className="px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 text-xs font-semibold border border-orange-200 flex items-center space-x-1.5 transition-all"
                 >
-                  <UserIcon className="w-3.5 h-3.5 text-indigo-400" />
+                  <UserIcon className="w-3.5 h-3.5 text-orange-600" />
                   <span className="max-w-[120px] truncate">{user?.full_name || user?.email?.split("@")[0]}</span>
                 </Link>
                 <Link
                   href="/chat"
-                  className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs sm:text-sm transition-all shadow-md shadow-indigo-600/25 flex items-center space-x-2"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-xs sm:text-sm transition-all shadow-md shadow-orange-500/25 flex items-center space-x-2"
                 >
                   <span>Panele Git</span>
                   <ArrowRight className="w-4 h-4" />
@@ -139,14 +156,14 @@ export default function HomePage() {
               <>
                 <Link
                   href="/login"
-                  className="px-3.5 py-1.5 rounded-lg text-slate-300 hover:text-white text-xs sm:text-sm font-medium hover:bg-slate-800/60 transition-all flex items-center space-x-1.5"
+                  className="px-3.5 py-1.5 rounded-xl text-slate-700 hover:text-orange-600 text-xs sm:text-sm font-semibold hover:bg-orange-50 transition-all flex items-center space-x-1.5"
                 >
-                  <LogIn className="w-3.5 h-3.5" />
+                  <LogIn className="w-3.5 h-3.5 text-orange-600" />
                   <span>Giriş Yap</span>
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium text-xs sm:text-sm transition-all shadow-md shadow-indigo-600/25 flex items-center space-x-1.5"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-xs sm:text-sm transition-all shadow-md shadow-orange-500/25 flex items-center space-x-1.5"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
                   <span>Kayıt Ol (100M Token)</span>
@@ -157,53 +174,51 @@ export default function HomePage() {
         </div>
       </header>
 
-
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-800/60 border border-slate-700/60 text-xs font-mono text-slate-300 mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Tüm Yapay Zeka Güçleri Tek Bir Çatı Altında</span>
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-xs font-bold text-orange-700 mb-6 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-orange-500" />
+            <span>Tüm Yapay Zeka Güçleri TanCoreLab Çatısı Altında</span>
           </div>
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">
-            ChatGPT + Claude Code + Gemini + Higgsfield <br />
-            <span className="gradient-text">Hepsi Bir Arada</span>
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-900 mb-6 leading-tight">
+            ChatGPT + Claude Code + Gemini <br />
+            <span className="bg-gradient-to-r from-[#FFA200] via-[#FF7500] to-[#FF4800] bg-clip-text text-transparent">
+              Hepsi Bir Arada
+            </span>
           </h1>
-          <p className="text-slate-400 text-lg sm:text-xl leading-relaxed">
-            Kurumsal ölçekte tasarlanmış birleşik yapay zeka SaaS platformu. Kod geliştirin, medya üretin, derin araştırmalar yapın, vektör hafızanızı yönetin ve özel agentlarınızı çalıştırın.
+          <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
+            Kurumsal ölçekte birleşik yapay zeka SaaS platformu. Kod geliştirin, medya üretin, derin araştırmalar yapın ve vektör hafızanızı yönetin.
           </p>
         </div>
 
         {/* Modules Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {modules.map((m, idx) => {
             const Icon = m.icon;
             return (
               <Link
                 key={idx}
                 href={m.href}
-                className="group relative p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/50 hover:bg-slate-900/90 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:shadow-indigo-500/10"
+                className="group relative p-6 rounded-3xl bg-white border border-slate-200 hover:border-orange-300 hover:bg-orange-50/30 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:shadow-orange-500/10"
               >
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Icon className="w-24 h-24 text-white" />
-                </div>
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.color} flex items-center justify-center shadow-md`}>
-                      <Icon className="w-6 h-6 text-white" />
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} flex items-center justify-center shadow-md shadow-orange-500/20 text-white`}>
+                      <Icon className="w-6 h-6" />
                     </div>
-                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-orange-50 text-orange-700 border border-orange-200">
                       {m.badge}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
                     {m.title}
                   </h3>
-                  <p className="text-slate-400 text-xs leading-relaxed mb-6">
+                  <p className="text-slate-500 text-xs leading-relaxed mb-6">
                     {m.description}
                   </p>
                 </div>
-                <div className="flex items-center text-xs font-semibold text-indigo-400 group-hover:text-indigo-300 transition-colors">
+                <div className="flex items-center text-xs font-bold text-orange-600 group-hover:text-orange-700 transition-colors">
                   <span>Modülü Başlat</span>
                   <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -214,8 +229,8 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/60 py-6 text-center text-xs text-slate-500">
-        <p>NexusAI Platform • Full Stack Architecture (Next.js 14, FastAPI, PostgreSQL, Redis, Qdrant, LiteLLM, Celery, K8s)</p>
+      <footer className="border-t border-slate-200 py-6 text-center text-xs text-slate-500 bg-white">
+        <p>TanCoreLab Platform • Enterprise AI Cloud Architecture</p>
       </footer>
     </div>
   );

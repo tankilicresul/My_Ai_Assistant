@@ -3,8 +3,8 @@ import "./globals.css";
 import { AuthProvider } from "../context/auth-context";
 
 export const metadata: Metadata = {
-  title: "NexusAI - Enterprise AI Super-Platform",
-  description: "Unified AI Platform: ChatGPT + Claude Code + Gemini Deep Research + Higgsfield Studio + Vector Memory + Agent Marketplace",
+  title: "TanCoreLab - AI Super-Platform",
+  description: "Unified AI Platform: ChatGPT + Claude Code + Gemini Deep Research + Media Studio + Vector Memory + Autonomous Agents",
 };
 
 export default function RootLayout({
@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className="dark">
-      <body className="bg-[#090d16] text-slate-100 min-h-screen antialiased flex flex-col">
+    <html lang="tr" className="light">
+      <body className="bg-[#F8F9FB] text-slate-800 min-h-screen antialiased flex flex-col selection:bg-orange-500 selection:text-white">
         <AuthProvider>
           {children}
         </AuthProvider>
@@ -22,4 +22,3 @@ export default function RootLayout({
     </html>
   );
 }
-
