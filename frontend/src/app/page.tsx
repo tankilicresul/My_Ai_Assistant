@@ -24,76 +24,76 @@ export default function HomePage() {
   const { user, isAuthenticated } = useAuth();
   const modules = [
     {
-      title: "1. Çoklu Yapay Zeka Sohbeti",
-      description: "GPT-4o, Claude 3.7, Gemini 2.0, DeepSeek R1 ve Llama ile sohbet, sesli iletişim, Multi-Model Arena ve canlı Canvas.",
+      title: "Sohbet & Model Arena",
+      description: "GPT-4o, Claude 3.7, Gemini 2.0 ve DeepSeek R1 ile çoklu model karşılaştırması ve canlı sohbet.",
       icon: MessageSquare,
       href: "/chat",
       color: "from-amber-400 to-orange-500",
       badge: "Çoklu Model",
     },
     {
-      title: "2. Kodlama Stüdyosu & IDE",
-      description: "VS Code Monaco editörü, Linux web terminali, Claude Code otonom kod geliştirici ve otomatik test üretimi.",
+      title: "Kodlama Stüdyosu & IDE",
+      description: "Monaco editör, Linux terminali ve Claude Code ile tam otonom yazılım geliştirme.",
       icon: Code2,
       href: "/code",
       color: "from-orange-500 to-rose-500",
-      badge: "IDE & Terminal",
+      badge: "Geliştirici",
     },
     {
-      title: "3. Sesli Asistan & Podcast",
-      description: "NotebookLM tarzı 2 yapay zeka sunuculu interaktif sesli podcast üretimi ve gerçek zamanlı Türkçe sesli asistan.",
+      title: "Sesli Asistan & Podcast",
+      description: "NotebookLM tarzı çift sunuculu podcast üretimi ve gerçek zamanlı sesli diyalog.",
       icon: Radio,
       href: "/podcast",
       color: "from-amber-500 to-orange-600",
-      badge: "Sesli AI",
+      badge: "Ses & Seslendirme",
     },
     {
-      title: "4. Görsel & Video Stüdyosu",
-      description: "FLUX 1.0, SDXL, Wan 2.1 ve CogVideo ile Higgsfield Seedance 2.0 sinematik kamera açılı görsel ve video üretimi.",
+      title: "Görsel & Video Stüdyosu",
+      description: "FLUX, Wan 2.1 ve Higgsfield motorlarıyla yüksek çözünürlüklü görsel ve sinematik video üretimi.",
       icon: Sparkles,
       href: "/studio",
       color: "from-orange-400 to-pink-500",
-      badge: "Medya AI",
+      badge: "Medya",
     },
     {
-      title: "5. Derin Web Araştırması",
-      description: "Gemini Deep Research ve Perplexity tarzı çok adımlı otonom web taraması, kaynak doğrulama ve detaylı raporlama.",
+      title: "Derin Web Araştırması",
+      description: "Çok kaynaklı otonom web taraması, akademik doğrulama ve yapılandırılmış raporlama.",
       icon: Compass,
       href: "/research",
       color: "from-amber-500 to-teal-500",
       badge: "Araştırma",
     },
     {
-      title: "6. Vektörel Bellek & Hafıza",
-      description: "Qdrant vektör veritabanı ve Mem0 mimarisi ile kullanıcı tercihleri, deneyimler ve projelerin kalıcı hatırlanması.",
+      title: "Vektör Bellek & Hafıza",
+      description: "Qdrant ve Mem0 altyapısıyla kullanıcı tercihleri ve uzun vadeli proje bağlam hafızası.",
       icon: Database,
       href: "/memory",
       color: "from-emerald-400 to-teal-600",
       badge: "Hafıza",
     },
     {
-      title: "7. Dosya & Doküman Analizi",
-      description: "Julius AI tarzı PDF, Excel (XLSX), Word ve CSV dosyalarını doğal dille analiz etme, grafik çizdirme ve doküman üretimi.",
+      title: "Belge & Veri Analizi",
+      description: "PDF, Excel ve dokümanları doğal dille sorgulama, tablo çıkarma ve grafik üretimi.",
       icon: FileSpreadsheet,
       href: "/files",
       color: "from-amber-400 to-orange-500",
-      badge: "PDF / Excel",
+      badge: "Doküman",
     },
     {
-      title: "8. Yapay Zeka Ajan Pazarı",
-      description: "Özelleştirilmiş yazılım mimarı, finans uzmanı, e-ticaret ve veri analizi otonom ajanlarını çalıştırma ve yönetme.",
+      title: "Otonom Ajan Pazarı",
+      description: "Yazılım mimarı, finans uzmanı ve veri analisti gibi hedefe odaklı otonom yapay zeka ajanları.",
       icon: Bot,
       href: "/marketplace",
       color: "from-orange-500 to-purple-600",
       badge: "Ajanlar",
     },
     {
-      title: "9. Yönetim & Sistem Paneli",
-      description: "Sistem kullanım istatistikleri, model bazında token tüketimi, tahmini API maliyetleri ve güvenlik audit logları.",
+      title: "Sistem & Kullanım Paneli",
+      description: "Token tüketimi, model bazlı maliyet takibi ve güvenlik audit logları.",
       icon: ShieldAlert,
       href: "/admin",
       color: "from-rose-500 to-orange-500",
-      badge: "Yönetici",
+      badge: "Yönetim",
     },
   ];
 
@@ -103,7 +103,7 @@ export default function HomePage() {
       <header className="border-b border-slate-200 bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-xs">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center shadow-md shadow-orange-500/20">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center shadow-md shadow-orange-500/20">
               <Zap className="w-5 h-5 text-white fill-white" />
             </div>
             <div>
@@ -115,8 +115,6 @@ export default function HomePage() {
 
           {/* Right Actions */}
           <div className="flex items-center space-x-3">
-
-
             {isAuthenticated ? (
               <>
                 <Link
@@ -157,12 +155,8 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold mb-5 tracking-wider uppercase shadow-xs">
-            <Zap className="w-3.5 h-3.5 text-orange-600 fill-orange-500" />
-            <span>TanCoreLab AI Suite</span>
-          </div>
+      <main className="max-w-7xl mx-auto px-6 py-14 flex-1 flex flex-col justify-center">
+        <div className="text-center max-w-3xl mx-auto mb-14">
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-900 mb-6 leading-tight">
             ALL-IN-ONE <br />
             <span className="bg-gradient-to-r from-[#FFA200] via-[#FF7500] to-[#FF4800] bg-clip-text text-transparent">
@@ -170,10 +164,9 @@ export default function HomePage() {
             </span>
           </h1>
           <p className="text-slate-600 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto">
-            Sohbet, kodlama stüdyosu, medya üretimi, derin web araştırması ve otonom yapay zeka ajanları tek bir çatı altında.
+            Sohbet, kodlama stüdyosu, medya üretimi, derin araştırma ve otonom ajanlar tek bir çatı altında.
           </p>
         </div>
-
 
         {/* Modules Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -183,27 +176,27 @@ export default function HomePage() {
               <Link
                 key={idx}
                 href={m.href}
-                className="group relative p-6 rounded-3xl bg-white border border-slate-200 hover:border-orange-300 hover:bg-orange-50/30 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:shadow-orange-500/10"
+                className="group relative p-6 rounded-2xl bg-white border border-slate-200/90 hover:border-orange-300 hover:shadow-lg hover:shadow-orange-500/5 transition-all duration-200 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} flex items-center justify-center shadow-md shadow-orange-500/20 text-white`}>
-                      <Icon className="w-6 h-6" />
+                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${m.color} flex items-center justify-center shadow-sm text-white`}>
+                      <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-orange-50 text-orange-700 border border-orange-200">
+                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200/80 group-hover:border-orange-200 group-hover:bg-orange-50 group-hover:text-orange-700 transition-colors">
                       {m.badge}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
+                  <h3 className="text-base font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
                     {m.title}
                   </h3>
                   <p className="text-slate-500 text-xs leading-relaxed mb-6">
                     {m.description}
                   </p>
                 </div>
-                <div className="flex items-center text-xs font-bold text-orange-600 group-hover:text-orange-700 transition-colors">
-                  <span>Modülü Başlat</span>
-                  <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
+                <div className="flex items-center text-xs font-semibold text-slate-500 group-hover:text-orange-600 transition-colors">
+                  <span>Modüle Git</span>
+                  <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             );
@@ -213,7 +206,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 py-6 text-center text-xs text-slate-500 bg-white">
-        <p>TanCoreLab Platform • Enterprise AI Cloud Architecture</p>
+        <p>TanCoreLab • All-in-One AI Platform</p>
       </footer>
     </div>
   );
