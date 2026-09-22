@@ -49,3 +49,27 @@ class DirectFileCreateRequest(BaseModel):
     # For JSON
     data: Optional[Any] = None
 
+class DocumentChatMessage(BaseModel):
+    role: str  # user, assistant, system
+    content: str
+    attachments: Optional[List[str]] = None  # Document IDs or filenames
+
+class DocumentWorkspaceChatRequest(BaseModel):
+    messages: List[DocumentChatMessage]
+    active_document_ids: Optional[List[str]] = None
+    model: Optional[str] = "gpt-4o"
+
+class DocumentWorkspaceChatResponse(BaseModel):
+    message: DocumentChatMessage
+    suggested_actions: Optional[List[str]] = None
+    tokens_used: int = 0
+
+class DocumentWorkspaceSynthesizeRequest(BaseModel):
+    messages: List[DocumentChatMessage]
+    active_document_ids: Optional[List[str]] = None
+    file_type: str  # pdf, docx, xlsx, csv, json
+    title: Optional[str] = None
+    custom_instruction: Optional[str] = None
+    model: Optional[str] = "gpt-4o"
+
+

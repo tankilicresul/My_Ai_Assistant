@@ -116,6 +116,112 @@ class CodeSandboxService:
             "modified_at": stat.st_mtime
         }
 
+    def create_folder(self, workspace_id: str, folder_path: str) -> Dict[str, Any]:
+        ws_dir = self.get_workspace_dir(workspace_id)
+        target_dir = os.path.abspath(os.path.join(ws_dir, folder_path))
+
+        if not target_dir.startswith(ws_dir):
+            raise ValueError("Güvenlik hatası: Çalışma alanı dışına erişilemez.")
+
+        os.makedirs(target_dir, exist_ok=True)
+        return {"path": folder_path, "success": True}
+
+    def delete_item(self, workspace_id: str, item_path: str) -> Dict[str, Any]:
+        ws_dir = self.get_workspace_dir(workspace_id)
+        target_path = os.path.abspath(os.path.join(ws_dir, item_path))
+
+        if not target_path.startswith(ws_dir) or target_path == ws_dir:
+            raise ValueError("Güvenlik hatası: Çalışma alanı kökü veya dışı silinemez.")
+
+        if not os.path.exists(target_path):
+            raise FileNotFoundError(f"Öğe bulunamadı: {item_path}")
+
+        if os.path.isdir(target_path):
+            shutil.rmtree(target_path)
+        else:
+            os.remove(target_path)
+
+        return {"path": item_path, "success": True}
+
+    def delete_workspace(self, workspace_id: str):
+        ws_dir = self.get_workspace_dir(workspace_id)
+        if os.path.exists(ws_dir):
+            shutil.rmtree(ws_dir, ignore_errors=True)
+
+    def load_template(self, workspace_id: str, template_type: str) -> Dict[str, Any]:
+        ws_dir = self.get_workspace_dir(workspace_id)
+
+        if template_type == "python":
+            self.write_file(workspace_id, "main.py", (
+                "# Python TanCoreLab Starter\n"
+                "import math\n\n"
+                "def calculate_stats(numbers):\n"
+                "    total = sum(numbers)\n"
+                "    avg = total / len(numbers) if numbers else 0\n"
+                "    return {'total': total, 'avg': avg, 'max': max(numbers), 'min': min(numbers)}\n\n"
+                "if __name__ == '__main__':\n"
+                "    data = [12, 45, 67, 89, 23, 56, 91]\n"
+                "    stats = calculate_stats(data)\n"
+                "    print(f'Sonuçlar: {stats}')\n"
+            ))
+            self.write_file(workspace_id, "requirements.txt", "# Bağımlılıklar\nrequests>=2.28.0\npydantic>=2.0.0\n")
+            self.write_file(workspace_id, "README.md", "# Python Projesi\n\nTerminalde çalıştırmak için:\n```bash\npython main.py\n```\n")
+
+        elif template_type == "web":
+            self.write_file(workspace_id, "index.html", (
+                "<!DOCTYPE html>\n"
+                "<html lang=\"tr\">\n"
+                "<head>\n"
+                "  <meta charset=\"UTF-8\">\n"
+                "  <title>TanCoreLab Web Projesi</title>\n"
+                "  <link rel=\"stylesheet\" href=\"styles.css\">\n"
+                "</head>\n"
+                "<body>\n"
+                "  <div class=\"card\">\n"
+                "    <h1>TanCoreLab Web Stüdyosu 🚀</h1>\n"
+                "    <p>HTML, CSS ve JavaScript canlı kodlama alanı.</p>\n"
+                "    <button onclick=\"sayHello()\">Tıkla</button>\n"
+                "  </div>\n"
+                "  <script src=\"app.js\"></script>\n"
+                "</body>\n"
+                "</html>\n"
+            ))
+            self.write_file(workspace_id, "styles.css", (
+                "body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }\n"
+                ".card { background: #1e293b; padding: 2rem; border-radius: 1rem; text-align: center; border: 1px solid #334155; }\n"
+                "button { background: #ea580c; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-weight: bold; }\n"
+                "button:hover { background: #f97316; }\n"
+            ))
+            self.write_file(workspace_id, "app.js", (
+                "function sayHello() {\n"
+                "  alert('TanCoreLab Web Projeniz Çalışıyor!');\n"
+                "}\n"
+                "console.log('TanCoreLab Web App yüklendi.');\n"
+            ))
+            self.write_file(workspace_id, "README.md", "# Web Projesi\n\nHTML, CSS ve JS dosyalarını düzenleyebilirsiniz.\n")
+
+        elif template_type == "node":
+            self.write_file(workspace_id, "index.js", (
+                "// Node.js TanCoreLab Başlangıç\n"
+                "const os = require('os');\n\n"
+                "console.log('Platform:', os.platform());\n"
+                "console.log('CPU Mimarisi:', os.arch());\n"
+                "console.log('Boş Bellek:', Math.round(os.freemem() / (1024 * 1024)), 'MB');\n"
+            ))
+            self.write_file(workspace_id, "package.json", (
+                "{\n"
+                "  \"name\": \"tancorelab-node-project\",\n"
+                "  \"version\": \"1.0.0\",\n"
+                "  \"main\": \"index.js\",\n"
+                "  \"scripts\": {\n"
+                "    \"start\": \"node index.js\"\n"
+                "  }\n"
+                "}\n"
+            ))
+            self.write_file(workspace_id, "README.md", "# Node.js Projesi\n\nÇalıştırmak için:\n```bash\nnode index.js\n```\n")
+
+        return {"template": template_type, "success": True}
+
     def execute_git(self, workspace_id: str, action: str, message: Optional[str] = None, branch: Optional[str] = None) -> Dict[str, Any]:
         ws_dir = self.get_workspace_dir(workspace_id)
         cmd = ["git"]

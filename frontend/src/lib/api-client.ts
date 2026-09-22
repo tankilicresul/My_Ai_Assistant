@@ -77,11 +77,22 @@ export class ApiClient {
   // Code Studio APIs
   static getWorkspaces = () => this.request<any[]>("/code/workspaces");
   static createWorkspace = (data: any) => this.request<any>("/code/workspaces", { method: "POST", body: JSON.stringify(data) });
+  static deleteWorkspace = (wsId: string) => this.request<any>(`/code/workspaces/${wsId}`, { method: "DELETE" });
   static getWorkspaceTree = (wsId: string) => this.request<any[]>(`/code/workspaces/${wsId}/tree`);
   static readFile = (wsId: string, path: string) => this.request<any>(`/code/workspaces/${wsId}/file?path=${encodeURIComponent(path)}`);
   static writeFile = (wsId: string, path: string, content: string) => this.request<any>(`/code/workspaces/${wsId}/file`, {
     method: "POST",
     body: JSON.stringify({ path, content }),
+  });
+  static deleteFile = (wsId: string, path: string) => this.request<any>(`/code/workspaces/${wsId}/file?path=${encodeURIComponent(path)}`, {
+    method: "DELETE",
+  });
+  static createFolder = (wsId: string, path: string) => this.request<any>(`/code/workspaces/${wsId}/folder`, {
+    method: "POST",
+    body: JSON.stringify({ path, content: "" }),
+  });
+  static loadTemplate = (wsId: string, templateType: string) => this.request<any>(`/code/workspaces/${wsId}/template?template_type=${encodeURIComponent(templateType)}`, {
+    method: "POST",
   });
   static executeGit = (wsId: string, data: any) => this.request<any>(`/code/workspaces/${wsId}/git`, { method: "POST", body: JSON.stringify(data) });
   static executeTerminal = (wsId: string, command: string) => this.request<any>(`/code/workspaces/${wsId}/terminal`, {

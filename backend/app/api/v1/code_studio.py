@@ -95,6 +95,59 @@ async def write_file(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@router.delete("/workspaces/{workspace_id}")
+async def delete_workspace(
+    workspace_id: str,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    stmt = select(Workspace).where(Workspace.id == workspace_id, Workspace.user_id == user.id)
+    res = await db.execute(stmt)
+    ws = res.scalar_one_or_none()
+    if not ws:
+        raise HTTPException(status_code=404, detail="Çalışma alanı bulunamadı.")
+
+    await db.delete(ws)
+    await db.commit()
+    code_sandbox_service.delete_workspace(workspace_id)
+    return {"message": "Çalışma alanı başarıyla silindi.", "id": workspace_id}
+
+@router.delete("/workspaces/{workspace_id}/file")
+async def delete_file_or_folder(
+    workspace_id: str,
+    path: str,
+    user: User = Depends(get_current_user)
+):
+    try:
+        res = code_sandbox_service.delete_item(workspace_id, path)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/workspaces/{workspace_id}/folder")
+async def create_folder(
+    workspace_id: str,
+    req: FileContentRequest,
+    user: User = Depends(get_current_user)
+):
+    try:
+        res = code_sandbox_service.create_folder(workspace_id, req.path)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/workspaces/{workspace_id}/template")
+async def load_template(
+    workspace_id: str,
+    template_type: str,
+    user: User = Depends(get_current_user)
+):
+    try:
+        res = code_sandbox_service.load_template(workspace_id, template_type)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @router.post("/workspaces/{workspace_id}/git")
 async def git_operation(
     workspace_id: str,
