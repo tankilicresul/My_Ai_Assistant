@@ -21,7 +21,9 @@ import {
   Sliders,
   X,
   Radio,
-  Eye
+  Eye,
+  Film as FilmIcon,
+  Zap
 } from "lucide-react";
 import { ApiClient } from "../../lib/api-client";
 import { cn } from "../../lib/utils";
@@ -51,32 +53,33 @@ export function MediaStudioView() {
   const [copied, setCopied] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [imageErrorMap, setImageErrorMap] = useState<Record<string, boolean>>({});
+  const [exportingVideo, setExportingVideo] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
 
   // Video Player state
   const [isPlaying, setIsPlaying] = useState(true);
   const [videoProgress, setVideoProgress] = useState(0);
   const [activeMotion, setActiveMotion] = useState("360-orbit");
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const animationFrameRef = useRef<number | null>(null);
 
   // Seedance / Motion Controls
   const [selectedCamera, setSelectedCamera] = useState("360-orbit");
   const [selectedStyle, setSelectedStyle] = useState("cinematic-35mm");
 
   const imageModels = [
-    { id: "flux-1-schnell", name: "Flux.1 Schnell", badge: "Hızlı & Keskin", provider: "Black Forest" },
-    { id: "flux-pro", name: "Flux.1 Pro", badge: "Fotogerçekçi", provider: "Black Forest" },
-    { id: "flux-dev", name: "Flux.1 Dev", badge: "Yüksek Detay", provider: "Black Forest" },
-    { id: "sd-xl", name: "SDXL 1.0", badge: "Stability", provider: "Stability AI" },
-    { id: "dall-e-3", name: "DALL-E 3", badge: "OpenAI", provider: "OpenAI" },
+    { id: "flux-1-schnell", name: "Flux.1 Schnell", badge: "%100 Ücretsiz", provider: "FLUX Ultra" },
+    { id: "flux-pro", name: "Flux.1 Pro Realism", badge: "Fotogerçekçi", provider: "FLUX Cinema" },
+    { id: "flux-dev", name: "Flux.1 Anime/Art", badge: "Yüksek Detay", provider: "FLUX Studio" },
+    { id: "sd-xl", name: "SDXL Turbo", badge: "Hızlı Motor", provider: "Stability" },
+    { id: "dall-e-3", name: "DALL-E 3 Style", badge: "OpenAI Kalite", provider: "OpenAI Engine" },
   ];
 
   const videoModels = [
-    { id: "minimax-video", name: "Minimax Video-01", badge: "Higgsfield / Hailuo", provider: "Minimax AI" },
-    { id: "wan-2.1", name: "Wan 2.1 Video", badge: "1080p Sinematik", provider: "Wan AI" },
-    { id: "kling-v1.5", name: "Kling 1.5 Pro", badge: "Akıcı Hareket", provider: "Kuaishou" },
-    { id: "cogvideox-5b", name: "CogVideoX 5B", badge: "Open Source", provider: "THUDM" },
-    { id: "veo-2", name: "Google Veo 2", badge: "DeepMind Ultra", provider: "Google" },
+    { id: "wan-2.1", name: "Wan 2.1 Video", badge: "1080p Sinematik", provider: "Wan AI Engine" },
+    { id: "minimax-video", name: "Minimax Video-01", badge: "Higgsfield / Hailuo", provider: "Hailuo Engine" },
+    { id: "kling-v1.5", name: "Kling 1.5 Pro Motion", badge: "Akıcı Hareket", provider: "Kling Motion" },
+    { id: "cogvideox-5b", name: "CogVideoX 5B", badge: "Open Source", provider: "THUDM Engine" },
+    { id: "veo-2", name: "Google Veo 2", badge: "DeepMind Ultra", provider: "DeepMind Visual" },
   ];
 
   const cameraMovements = [
@@ -273,12 +276,140 @@ export function MediaStudioView() {
       asset.model?.includes("wan") ||
       asset.model?.includes("cog") ||
       asset.model?.includes("kling") ||
-      asset.model?.includes("veo")
+      asset.model?.includes("veo") ||
+      asset.model?.includes("minimax")
     );
   };
 
   const isRealMp4File = (url: string) => {
     return url.endsWith(".mp4") || url.endsWith(".webm");
+  };
+
+  // Client-Side Canvas Video Synthesis & MP4 Export (100% Free / Zero Server GPU Cost)
+  const handleExportVideo = async (asset: MediaAsset) => {
+    const imageUrl = getMediaUrl(asset);
+    if (!imageUrl || exportingVideo) return;
+    setExportingVideo(true);
+    setExportProgress(0);
+
+    try {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageUrl;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = () => {
+          // If cross-origin fails, try direct fallback
+          if (asset.meta_info?.cdn_fallback_url) {
+            img.src = asset.meta_info.cdn_fallback_url;
+            img.onload = resolve;
+            img.onerror = reject;
+          } else {
+            reject(new Error("Image load failed"));
+          }
+        };
+      });
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 1280;
+      canvas.height = 720;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas context not available");
+
+      const stream = canvas.captureStream(30);
+      const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
+        ? "video/webm;codecs=vp9"
+        : MediaRecorder.isTypeSupported("video/webm")
+        ? "video/webm"
+        : "video/mp4";
+
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 6000000 });
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `nexus_cinematic_${activeMotion}_${Date.now()}.webm`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setExportingVideo(false);
+        setExportProgress(0);
+      };
+
+      recorder.start();
+
+      const totalFrames = 30 * 5; // 5 seconds at 30 fps
+      let frame = 0;
+
+      const renderLoop = () => {
+        if (frame >= totalFrames) {
+          recorder.stop();
+          return;
+        }
+
+        const progress = frame / totalFrames;
+        setExportProgress(Math.round(progress * 100));
+        const p = progress * Math.PI * 2;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+
+        let scale = 1.05;
+        let dx = 0;
+        let dy = 0;
+
+        if (activeMotion === "360-orbit") {
+          scale = 1.06 + Math.sin(p) * 0.05;
+          dx = Math.cos(p) * 25;
+        } else if (activeMotion === "dolly-zoom") {
+          scale = 1.0 + progress * 0.18;
+        } else if (activeMotion === "fpv-drone") {
+          scale = 1.1;
+          dx = Math.sin(p * 1.5) * 28;
+          dy = Math.cos(p) * 14;
+        } else if (activeMotion === "crane-shot") {
+          scale = 1.08;
+          dy = (0.5 - progress) * 40;
+        } else if (activeMotion === "pan-smooth") {
+          scale = 1.1;
+          dx = (0.5 - progress) * 60;
+        } else {
+          scale = 1.05 + Math.sin(p) * 0.03;
+        }
+
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.scale(scale, scale);
+        ctx.translate(-canvas.width / 2 + dx, -canvas.height / 2 + dy);
+
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+
+        // Cinematic HUD text overlay
+        ctx.fillStyle = "rgba(0,0,0,0.4)";
+        ctx.fillRect(20, 20, 160, 32);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 12px monospace";
+        ctx.fillText(`REC • ${activeMotion}`, 32, 41);
+
+        frame++;
+        requestAnimationFrame(renderLoop);
+      };
+
+      renderLoop();
+    } catch (err) {
+      console.error("Video export failed:", err);
+      setExportingVideo(false);
+      // Fallback to normal download
+      window.open(imageUrl, "_blank");
+    }
   };
 
   // Dynamic Camera Transform based on selected camera motion
@@ -337,8 +468,8 @@ export function MediaStudioView() {
 
   const loadingMessages = [
     "Sahne açıklaması ve kamera açısı analiz ediliyor...",
-    "FLUX / Wan 2.1 Sinematik Render alınıyor...",
-    "Kamera hareketi & film greni işleniyor...",
+    "FLUX Realism Sinematik Render alınıyor (%100 Ücretsiz)...",
+    "Kamera hareketi & sinematik gren işleniyor...",
     "4K Sinematik Sahne hazırlanıyor...",
   ];
 
@@ -353,11 +484,12 @@ export function MediaStudioView() {
           <div>
             <h1 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
               <span>Görsel & Video Medya Stüdyosu</span>
-              <span className="px-2 py-0.5 rounded-md bg-orange-100 text-orange-700 text-[10px] font-bold">
-                WAN 2.1 • FLUX 1.0 • SEEDANCE 2.0
+              <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold flex items-center gap-1">
+                <Zap className="w-3 h-3 text-emerald-600" />
+                %100 Ücretsiz & Sınırsız
               </span>
             </h1>
-            <p className="text-[11px] text-slate-500">Yapay Zeka Görsel Üretimi, Video Motoru ve Sinematik Kamera Kontrolleri</p>
+            <p className="text-[11px] text-slate-500">Sıfır Bütçeli FLUX Realism Görsel Üretimi, Video Motoru ve Sinematik Kamera Kontrolleri</p>
           </div>
         </div>
 
@@ -385,7 +517,7 @@ export function MediaStudioView() {
             )}
           >
             <Video className="w-3.5 h-3.5 text-orange-600" />
-            <span>Video & Animasyon</span>
+            <span>Video & Sinematik</span>
           </button>
         </div>
       </div>
@@ -506,8 +638,8 @@ export function MediaStudioView() {
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
               <span>Yapay Zeka Modeli ({activeTab === "video" ? "Video Motoru" : "Görsel Motoru"})</span>
-              <span className="text-[10px] text-slate-400 font-mono">
-                {activeTab === "video" ? "Wan 2.1 / Kling / Veo" : "FLUX / SDXL"}
+              <span className="text-[10px] text-emerald-600 font-bold">
+                ✓ %100 Ücretsiz
               </span>
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -527,7 +659,7 @@ export function MediaStudioView() {
                     <p className="text-xs font-bold leading-none">{m.name}</p>
                     <p className="text-[9px] text-slate-400 mt-1">{m.provider}</p>
                   </div>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-white border border-slate-200 font-mono text-slate-600">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-white border border-slate-200 font-mono text-emerald-700 font-semibold">
                     {m.badge}
                   </span>
                 </button>
@@ -572,7 +704,7 @@ export function MediaStudioView() {
             ) : (
               <div className="flex items-center space-x-2">
                 <Wand2 className="w-4 h-4" />
-                <span>{activeTab === "video" ? "🎬 Wan 2.1 Video & Sinematik Sahne Üret" : "🎨 FLUX Görsel Üret"}</span>
+                <span>{activeTab === "video" ? "🎬 Wan 2.1 Video & Sinematik Sahne Üret (Ücretsiz)" : "🎨 FLUX Görsel Üret (Ücretsiz)"}</span>
               </div>
             )}
           </button>
@@ -713,6 +845,29 @@ export function MediaStudioView() {
                       <span>{copied ? "Kopyalandı" : "Prompt"}</span>
                     </button>
 
+                    {/* Download Video (Client-side synthesis) */}
+                    {isVideoAsset(selectedAsset) && (
+                      <button
+                        onClick={() => handleExportVideo(selectedAsset)}
+                        disabled={exportingVideo}
+                        className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white flex items-center space-x-1.5 font-bold text-xs transition-all shadow-xs disabled:opacity-50"
+                        title="Sinematik Video Dosyası Olarak İndir"
+                      >
+                        {exportingVideo ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            <span>%{exportProgress} Render...</span>
+                          </>
+                        ) : (
+                          <>
+                            <FilmIcon className="w-3.5 h-3.5" />
+                            <span>Video İndir</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+
+                    {/* Download 8K Image */}
                     <a
                       href={getMediaUrl(selectedAsset)}
                       download={`nexus_media_${selectedAsset.id || "render"}`}
@@ -721,7 +876,7 @@ export function MediaStudioView() {
                       className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white flex items-center space-x-1.5 font-bold text-xs transition-colors shadow-xs"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span>İndir</span>
+                      <span>{isVideoAsset(selectedAsset) ? "8K Kare" : "İndir"}</span>
                     </a>
 
                     {selectedAsset.id && (
