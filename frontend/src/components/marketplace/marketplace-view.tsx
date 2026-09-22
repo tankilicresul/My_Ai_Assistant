@@ -262,7 +262,7 @@ export function MarketplaceView() {
               <h3 className="text-base font-black text-slate-900 group-hover:text-orange-600 transition-colors">
                 {agent.name}
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed mt-1.5 line-clamp-3">
+              <p className="text-xs text-slate-500 leading-relaxed mt-1.5 break-words">
                 {agent.description}
               </p>
             </div>

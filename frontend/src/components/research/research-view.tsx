@@ -145,7 +145,7 @@ export function ResearchView() {
                       {new Date(t.created_at).toLocaleDateString("tr-TR")}
                     </span>
                   </div>
-                  <p className="font-bold line-clamp-2 text-slate-900">{t.query}</p>
+                  <p className="font-bold text-slate-900 break-words leading-snug">{t.query}</p>
                 </div>
               ))}
               {tasks.length === 0 && (
@@ -285,13 +285,13 @@ export function ResearchView() {
                         className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-orange-400 hover:shadow-sm transition-all flex flex-col justify-between group"
                       >
                         <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <p className="font-bold text-xs text-slate-900 group-hover:text-orange-600 truncate max-w-[80%]">
+                          <div className="flex items-start justify-between mb-1 gap-2">
+                            <p className="font-bold text-xs text-slate-900 group-hover:text-orange-600 break-words leading-tight flex-1">
                               {src.title}
                             </p>
-                            <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-orange-500" />
+                            <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-orange-500 shrink-0 mt-0.5" />
                           </div>
-                          <p className="text-[11px] text-slate-600 line-clamp-2 leading-relaxed">
+                          <p className="text-[11px] text-slate-600 break-words leading-relaxed mt-1">
                             {src.snippet}
                           </p>
                         </div>

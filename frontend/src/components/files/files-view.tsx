@@ -242,7 +242,7 @@ export function FilesView() {
                   <div className="flex items-center space-x-2.5 overflow-hidden flex-1">
                     {getFileIcon(doc.file_type)}
                     <div className="overflow-hidden flex-1">
-                      <p className="truncate font-bold text-slate-900">{doc.filename}</p>
+                      <p className="break-all font-bold text-slate-900 leading-tight">{doc.filename}</p>
                       <p className="text-[10px] text-slate-400 font-mono">
                         {formatBytes(doc.file_size_bytes)} • {doc.file_type.toUpperCase()} {doc.status === 'generated' ? '• AI' : ''}
                       </p>

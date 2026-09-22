@@ -19,6 +19,11 @@ body {
   background: var(--background);
   font-family: Inter, system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  overflow-wrap: break-word;
+}
+
+* {
+  overflow-wrap: break-word;
 }
 
 /* Custom modern scrollbar for warm theme */

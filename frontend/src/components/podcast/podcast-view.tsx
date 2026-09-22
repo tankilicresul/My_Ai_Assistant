@@ -214,7 +214,7 @@ export function PodcastView() {
                     {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
                   </button>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900 line-clamp-1">{podcastData.title}</h3>
+                    <h3 className="text-sm font-bold text-slate-900 break-words leading-tight">{podcastData.title}</h3>
                     <p className="text-xs text-slate-500 flex items-center space-x-2">
                       <span>Tahmini Süre: {podcastData.duration_est}</span>
                       <span>•</span>

@@ -886,7 +886,7 @@ export function AdminView() {
                           {log.model || "Core Platform API"}
                         </span>
                       </div>
-                      <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                      <p className="text-[10px] text-slate-500 break-words mt-0.5">
                         {log.user_email || "Anonim İstek"} {log.error_message ? `• Hata: ${log.error_message}` : ""}
                       </p>
                     </div>

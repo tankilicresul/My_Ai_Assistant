@@ -211,7 +211,7 @@ export function MediaStudioView() {
                   )}
                 >
                   <span className="text-[11px] font-bold">{c.name}</span>
-                  <span className="text-[9px] text-slate-400 line-clamp-1">{c.desc}</span>
+                  <span className="text-[9px] text-slate-400 break-words leading-tight">{c.desc}</span>
                 </button>
               ))}
             </div>
@@ -321,8 +321,8 @@ export function MediaStudioView() {
                   alt={selectedAsset.meta_info?.prompt || "Üretilen Medya"}
                   className="max-h-[460px] max-w-full rounded-2xl object-contain shadow-md border border-slate-100"
                 />
-                <div className="mt-4 flex items-center justify-between w-full max-w-lg px-2 text-xs text-slate-600">
-                  <span className="truncate pr-4 font-mono text-[11px] text-slate-700">
+                <div className="mt-4 flex items-center justify-between w-full max-w-lg px-2 text-xs text-slate-600 gap-3">
+                  <span className="break-words font-mono text-[11px] text-slate-700 flex-1 leading-relaxed">
                     {selectedAsset.meta_info?.prompt || "Medya"}
                   </span>
                   <a

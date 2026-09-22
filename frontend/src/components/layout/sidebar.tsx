@@ -26,16 +26,16 @@ import { cn } from "../../lib/utils";
 import { useAuth } from "../../context/auth-context";
 
 export const navigationItems = [
-  { name: "Yapay Zeka Sohbeti", href: "/chat", icon: MessageSquare, badge: "Çoklu LLM" },
-  { name: "Kodlama Stüdyosu & IDE", href: "/code", icon: Code2, badge: "Terminal" },
-  { name: "Sesli Asistan & Podcast", href: "/podcast", icon: Radio, badge: "Sesli AI" },
-  { name: "Görsel & Video Stüdyosu", href: "/studio", icon: Sparkles, badge: "Medya AI" },
-  { name: "Derin Web Araştırması", href: "/research", icon: Compass, badge: "Araştırma" },
-  { name: "Vektörel Bellek & Hafıza", href: "/memory", icon: Database, badge: "Hafıza" },
-  { name: "Dosya & Doküman Analizi", href: "/files", icon: FileSpreadsheet, badge: "PDF & Excel" },
-  { name: "Yapay Zeka Ajan Pazarı", href: "/marketplace", icon: Bot, badge: "Ajanlar" },
-  { name: "Yönetim & Sistem Paneli", href: "/admin", icon: ShieldAlert, badge: "Yönetici" },
-  { name: "Profil & Hesap Ayarları", href: "/profile", icon: UserIcon, badge: "Profil" },
+  { name: "Sohbet & Model Arena", href: "/chat", iconSrc: "/icons/chat.jpg", icon: MessageSquare, badge: "Çoklu LLM" },
+  { name: "Kodlama Stüdyosu & IDE", href: "/code", iconSrc: "/icons/code.jpg", icon: Code2, badge: "Terminal" },
+  { name: "Sesli Asistan & Podcast", href: "/podcast", iconSrc: "/icons/podcast.jpg", icon: Radio, badge: "Sesli AI" },
+  { name: "Görsel & Video Stüdyosu", href: "/studio", iconSrc: "/icons/studio.png", icon: Sparkles, badge: "Medya" },
+  { name: "Derin Web Araştırması", href: "/research", iconSrc: "/icons/research.jpg", icon: Compass, badge: "Araştırma" },
+  { name: "Vektörel Bellek & Hafıza", href: "/memory", iconSrc: "/icons/memory.jpg", icon: Database, badge: "Hafıza" },
+  { name: "Belge & Veri Analizi", href: "/files", iconSrc: "/icons/files.jpg", icon: FileSpreadsheet, badge: "PDF & Excel" },
+  { name: "Yapay Zeka Ajan Pazarı", href: "/marketplace", iconSrc: "/icons/marketplace.jpg", icon: Bot, badge: "Ajanlar" },
+  { name: "Yönetim & Sistem Paneli", href: "/admin", iconSrc: "/icons/admin.jpg", icon: ShieldAlert, badge: "Yönetici" },
+  { name: "Profil & Hesap Ayarları", href: "/profile", iconSrc: "/icons/profile.jpg", icon: UserIcon, badge: "Profil" },
 ];
 
 export function Sidebar() {
@@ -174,19 +174,27 @@ export function Sidebar() {
                 title={item.name}
                 className={cn(
                   "flex items-center rounded-xl text-xs font-medium transition-all group",
-                  isCollapsed ? "justify-center p-2.5" : "justify-between px-3 py-2.5",
+                  isCollapsed ? "justify-center p-2" : "justify-between px-2.5 py-2",
                   isActive
                     ? "bg-orange-50 text-orange-600 border border-orange-200 font-semibold shadow-xs"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent"
                 )}
               >
-                <div className="flex items-center space-x-3 overflow-hidden">
-                  <Icon
+                <div className="flex items-center space-x-2.5 overflow-hidden">
+                  <div
                     className={cn(
-                      "w-4 h-4 shrink-0 transition-colors",
-                      isActive ? "text-orange-600" : "text-slate-400 group-hover:text-slate-700"
+                      "w-6 h-6 rounded-lg overflow-hidden shrink-0 border transition-transform p-0.5 bg-amber-50/60",
+                      isActive
+                        ? "border-orange-400 shadow-xs shadow-orange-500/20 scale-105"
+                        : "border-slate-200/80 opacity-85 group-hover:opacity-100 group-hover:scale-105"
                     )}
-                  />
+                  >
+                    <img
+                      src={item.iconSrc}
+                      alt={item.name}
+                      className="w-full h-full object-cover rounded-[5px]"
+                    />
+                  </div>
                   {!isCollapsed && <span className="break-words leading-tight">{item.name}</span>}
                 </div>
                 {!isCollapsed && (
