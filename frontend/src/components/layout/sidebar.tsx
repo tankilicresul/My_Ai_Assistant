@@ -117,52 +117,66 @@ export function Sidebar() {
   return (
     <aside
       style={{ width: `${effectiveWidth}px` }}
-      className="border-r border-slate-200 bg-white flex flex-col justify-between shrink-0 h-screen sticky top-0 shadow-xs z-40 relative transition-[width] duration-75 select-none"
+      className="border-r border-[#27272a] bg-[#16161a] text-[#E4E4E7] flex flex-col justify-between shrink-0 h-screen sticky top-0 shadow-lg z-40 relative transition-[width] duration-75 select-none"
     >
       {/* Brand Header */}
       <div>
-        <div className="h-16 px-4 border-b border-slate-100 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2.5 overflow-hidden group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center shrink-0 shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
-              <Zap className="w-5 h-5 text-white fill-white" />
+        <div className="h-14 px-3.5 border-b border-[#27272a] flex items-center justify-between">
+          <Link href="/chat" className="flex items-center space-x-2.5 overflow-hidden group">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#d97706] to-[#ea580c] flex items-center justify-center shrink-0 shadow-md shadow-orange-950/40 group-hover:scale-105 transition-transform">
+              <span className="text-white text-base font-serif font-black">✳</span>
             </div>
             {!isCollapsed && (
-              <span className="font-black text-lg tracking-tight text-slate-900 whitespace-nowrap">
-                TanCore<span className="text-orange-600">Lab</span>
+              <span className="font-semibold text-sm tracking-tight text-[#f4f4f5] whitespace-nowrap">
+                Claude <span className="text-amber-500 font-mono text-xs font-normal">Hub</span>
               </span>
             )}
           </Link>
           {!isCollapsed && (
             <div className="flex items-center space-x-1">
               <Link
-                href="/"
-                className="text-slate-400 hover:text-orange-600 p-1.5 rounded-xl hover:bg-orange-50 transition-colors"
-                title="Ana Sayfa"
+                href="/chat"
+                className="text-zinc-400 hover:text-amber-400 p-1 rounded-lg hover:bg-zinc-800/60 transition-colors"
+                title="Yeni Sohbet"
               >
-                <Home className="w-4 h-4" />
+                <MessageSquare className="w-3.5 h-3.5" />
               </Link>
               <button
                 onClick={toggleCollapse}
-                className="text-slate-400 hover:text-orange-600 p-1.5 rounded-xl hover:bg-orange-50 transition-colors"
+                className="text-zinc-400 hover:text-amber-400 p-1 rounded-lg hover:bg-zinc-800/60 transition-colors"
                 title="Menüyü Daralt"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-3.5 h-3.5" />
               </button>
             </div>
           )}
           {isCollapsed && (
             <button
               onClick={toggleCollapse}
-              className="text-slate-400 hover:text-orange-600 p-1.5 rounded-xl hover:bg-orange-50 transition-colors mx-auto"
+              className="text-zinc-400 hover:text-amber-400 p-1 rounded-lg hover:bg-zinc-800/60 transition-colors mx-auto"
               title="Menüyü Genişlet"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
 
+        {/* Quick New Chat Button */}
+        <div className="p-2.5">
+          <Link
+            href="/chat"
+            className={cn(
+              "flex items-center justify-center space-x-2 rounded-xl bg-[#222228] hover:bg-[#2a2a32] border border-[#33333e] text-[#f4f4f5] text-xs font-medium py-2 px-3 transition-all hover:border-amber-500/40 shadow-xs",
+              isCollapsed && "p-2"
+            )}
+          >
+            <span className="text-amber-400 font-bold text-sm leading-none">+</span>
+            {!isCollapsed && <span>New chat</span>}
+          </Link>
+        </div>
+
         {/* Navigation links */}
-        <nav className="p-2.5 space-y-1 overflow-y-auto max-h-[calc(100vh-190px)]">
+        <nav className="px-2 space-y-0.5 overflow-y-auto max-h-[calc(100vh-230px)]">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname.startsWith(item.href);
@@ -172,25 +186,25 @@ export function Sidebar() {
                 href={item.href}
                 title={item.name}
                 className={cn(
-                  "flex items-center rounded-2xl text-xs font-bold transition-all group",
-                  isCollapsed ? "justify-center p-2.5" : "px-3 py-2.5",
+                  "flex items-center rounded-xl text-xs font-medium transition-all group",
+                  isCollapsed ? "justify-center p-2" : "px-2.5 py-2",
                   isActive
-                    ? "bg-orange-50 text-orange-600 border border-orange-200 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent"
+                    ? "bg-[#272730] text-[#fafafa] font-semibold border border-[#3f3f4e] shadow-xs"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-[#1f1f26] border border-transparent"
                 )}
               >
-                <div className="flex items-center space-x-3 overflow-hidden">
+                <div className="flex items-center space-x-2.5 overflow-hidden">
                   <div
                     className={cn(
-                      "w-7 h-7 rounded-xl flex items-center justify-center shrink-0 border transition-transform",
+                      "w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform",
                       isActive
-                        ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border-orange-400 shadow-xs scale-105"
-                        : "bg-slate-100 text-slate-600 border-slate-200 group-hover:border-orange-200 group-hover:bg-orange-50 group-hover:text-orange-600"
+                        ? "bg-amber-500/20 text-amber-400"
+                        : "text-zinc-400 group-hover:text-amber-400"
                     )}
                   >
                     <Icon className="w-3.5 h-3.5" />
                   </div>
-                  {!isCollapsed && <span className="truncate leading-tight">{item.name}</span>}
+                  {!isCollapsed && <span className="truncate leading-tight text-[11.5px]">{item.name}</span>}
                 </div>
               </Link>
             );
@@ -198,21 +212,21 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* User / Quota Footer */}
-      <div className="p-3.5 border-t border-slate-100 bg-slate-50/70">
+      {/* User / Free Plan Footer */}
+      <div className="p-3 border-t border-[#27272a] bg-[#141418]">
         {isAuthenticated ? (
           <>
-            <div className={cn("flex items-center mb-2.5", isCollapsed ? "justify-center" : "justify-between")}>
+            <div className={cn("flex items-center", isCollapsed ? "justify-center" : "justify-between")}>
               <Link href="/profile" className="flex items-center space-x-2.5 overflow-hidden group">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center text-xs font-black text-white shrink-0 shadow-sm shadow-orange-500/20 group-hover:ring-2 ring-orange-400 transition-all">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#d97706] to-[#ea580c] flex items-center justify-center text-[10px] font-bold text-white shrink-0 shadow-xs ring-1 ring-amber-500/30">
                   {initials}
                 </div>
                 {!isCollapsed && (
                   <div className="overflow-hidden">
-                    <p className="text-xs font-black text-slate-900 truncate group-hover:text-orange-600 transition-colors">
+                    <p className="text-xs font-medium text-zinc-200 truncate group-hover:text-amber-400 transition-colors">
                       {displayName}
                     </p>
-                    <p className="text-[10px] text-orange-600 font-bold">{displayRole}</p>
+                    <p className="text-[10px] text-amber-500 font-mono">Free Plan</p>
                   </div>
                 )}
               </Link>
@@ -220,35 +234,19 @@ export function Sidebar() {
                 <button
                   onClick={logout}
                   title="Oturumu Kapat"
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                  className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-400 hover:bg-zinc-800 transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
-            {!isCollapsed && (
-              <div className="space-y-1.5 pt-1">
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono font-bold">
-                  <span>Token Kotası</span>
-                  <span className="text-slate-700">
-                    {formatTokens(usedTokens)} / {formatTokens(quotaTokens)}
-                  </span>
-                </div>
-                <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-orange-600 rounded-full transition-all duration-300"
-                    style={{ width: `${Math.max(1, usagePercentage)}%` }}
-                  />
-                </div>
-              </div>
-            )}
           </>
         ) : (
           <div className="space-y-2">
             <Link
               href="/login"
               className={cn(
-                "w-full py-2.5 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs font-bold flex items-center justify-center space-x-2 transition-all shadow-md shadow-orange-500/20",
+                "w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium flex items-center justify-center space-x-2 transition-all shadow-xs",
                 isCollapsed && "p-2"
               )}
             >
@@ -264,9 +262,9 @@ export function Sidebar() {
         <div
           onMouseDown={startResizing}
           title="Genişliği Ayarlamak İçin Sürükleyin"
-          className="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-orange-500/40 active:bg-orange-600 transition-colors z-50 group flex items-center justify-center"
+          className="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-amber-500/50 active:bg-amber-500 transition-colors z-50 group flex items-center justify-center"
         >
-          <div className="w-0.5 h-8 bg-slate-300 group-hover:bg-orange-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="w-0.5 h-8 bg-zinc-700 group-hover:bg-amber-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       )}
     </aside>
