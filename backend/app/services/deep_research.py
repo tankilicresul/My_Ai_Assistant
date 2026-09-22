@@ -39,20 +39,51 @@ class DeepResearchService:
             except Exception as e:
                 print(f"[DeepResearch] Tavily search error: {e}")
 
-        # DuckDuckGo open search fallback
-        try:
-            from duckduckgo_search import DDGS
-            with DDGS() as ddgs:
-                ddg_results = list(ddgs.text(query, max_results=num_results))
-                for item in ddg_results:
-                    results.append({
-                        "title": item.get("title", "Web Kaynağı"),
-                        "url": item.get("href", ""),
-                        "snippet": item.get("body", ""),
-                        "reliability_score": 0.90
-                    })
-        except Exception:
-            # Fallback mock search results if offline
+        # 2. DuckDuckGo Direct HTML Web Scraper (Zero API Key & Unlimited)
+        if not results:
+            try:
+                import urllib.parse
+                q_enc = urllib.parse.quote(query)
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    resp = await client.get(
+                        f"https://html.duckduckgo.com/html/?q={q_enc}",
+                        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+                    )
+                    if resp.status_code == 200:
+                        soup = BeautifulSoup(resp.text, "html.parser")
+                        links = soup.select(".result__body")[:num_results]
+                        for item in links:
+                            title_elem = item.select_one(".result__title a")
+                            snippet_elem = item.select_one(".result__snippet")
+                            if title_elem and snippet_elem:
+                                raw_url = title_elem.get("href", "")
+                                # extract clean URL if redirect
+                                if "uddg=" in raw_url:
+                                    raw_url = urllib.parse.unquote(raw_url.split("uddg=")[1].split("&")[0])
+                                results.append({
+                                    "title": title_elem.get_text(strip=True),
+                                    "url": raw_url or f"https://duckduckgo.com/?q={q_enc}",
+                                    "snippet": snippet_elem.get_text(strip=True),
+                                    "reliability_score": 0.94
+                                })
+            except Exception as e:
+                print(f"[DeepResearch] HTML scraper error: {e}")
+
+        # 3. DuckDuckGo open search fallback
+        if not results:
+            try:
+                from duckduckgo_search import DDGS
+                with DDGS() as ddgs:
+                    ddg_results = list(ddgs.text(query, max_results=num_results))
+                    for item in ddg_results:
+                        results.append({
+                            "title": item.get("title", "Web Kaynağı"),
+                            "url": item.get("href", ""),
+                            "snippet": item.get("body", ""),
+                            "reliability_score": 0.90
+                        })
+            except Exception:
+                pass
             results = [
                 {
                     "title": f"{query} - Kapsamlı Endüstriyel Analiz ve Rapor",

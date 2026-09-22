@@ -70,7 +70,27 @@ class MediaGeneratorService:
             except Exception as e:
                 print(f"[MediaGenerator] Fal.ai API error: {e}")
 
-        # If no external provider configured or failed, generate high quality visual SVG / Placeholder
+        # 1. Pollinations.ai Free FLUX Image Generator (Zero API Key)
+        if not image_url:
+            try:
+                import urllib.parse
+                encoded_prompt = urllib.parse.quote(prompt)
+                dim = self._aspect_ratio_to_dim(aspect_ratio)
+                w, h = dim.get("width", 1024), dim.get("height", 1024)
+                seed_param = f"&seed={seed}" if seed else ""
+                pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?model=flux&width={w}&height={h}&nologo=true{seed_param}"
+                
+                async with httpx.AsyncClient(timeout=45.0) as client:
+                    img_resp = await client.get(pollinations_url)
+                    if img_resp.status_code == 200 and len(img_resp.content) > 1000:
+                        os.makedirs(settings.MEDIA_STORAGE_DIR, exist_ok=True)
+                        with open(saved_path, "wb") as f:
+                            f.write(img_resp.content)
+                        image_url = f"/api/v1/media/file/{file_id}"
+            except Exception as e:
+                print(f"[MediaGenerator] Pollinations FLUX error: {e}")
+
+        # 2. If all failed, generate studio asset placeholder
         if not image_url:
             self._create_studio_asset_placeholder(
                 saved_path,
@@ -192,3 +212,4 @@ class MediaGeneratorService:
             f.write(svg_content)
 
 media_generator_service = MediaGeneratorService()
+media_generator = media_generator_service
