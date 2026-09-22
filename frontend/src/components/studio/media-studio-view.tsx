@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Sparkles,
   Video,
@@ -15,10 +15,13 @@ import {
   Check,
   Trash2,
   RefreshCw,
-  ExternalLink,
-  Layers,
+  Play,
+  Pause,
+  RotateCcw,
+  Sliders,
   X,
-  Play
+  Radio,
+  Eye
 } from "lucide-react";
 import { ApiClient } from "../../lib/api-client";
 import { cn } from "../../lib/utils";
@@ -37,16 +40,24 @@ interface MediaAsset {
 }
 
 export function MediaStudioView() {
-  const [activeTab, setActiveTab] = useState<"image" | "video">("image");
+  const [activeTab, setActiveTab] = useState<"image" | "video">("video");
   const [prompt, setPrompt] = useState("");
-  const [selectedModel, setSelectedModel] = useState("flux-1-schnell");
-  const [aspectRatio, setAspectRatio] = useState("1:1");
+  const [selectedModel, setSelectedModel] = useState("wan-2.1");
+  const [aspectRatio, setAspectRatio] = useState("16:9");
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [history, setHistory] = useState<MediaAsset[]>([]);
   const [selectedAsset, setSelectedAsset] = useState<MediaAsset | null>(null);
   const [copied, setCopied] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [imageErrorMap, setImageErrorMap] = useState<Record<string, boolean>>({});
+
+  // Video Player state
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [activeMotion, setActiveMotion] = useState("360-orbit");
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const animationFrameRef = useRef<number | null>(null);
 
   // Seedance / Motion Controls
   const [selectedCamera, setSelectedCamera] = useState("360-orbit");
@@ -64,7 +75,7 @@ export function MediaStudioView() {
     { id: "wan-2.1", name: "Wan 2.1 Video", badge: "1080p Sinematik", provider: "Wan AI" },
     { id: "cogvideox-5b", name: "CogVideoX 5B", badge: "Open Source", provider: "THUDM" },
     { id: "kling-v1.5", name: "Kling 1.5 Pro", badge: "Akıcı Hareket", provider: "Kuaishou" },
-    { id: "veo-2", name: "Google Veo 2", badge: "DeepMind", provider: "Google" },
+    { id: "veo-2", name: "Google Veo 2", badge: "DeepMind Ultra", provider: "Google" },
   ];
 
   const cameraMovements = [
@@ -85,17 +96,29 @@ export function MediaStudioView() {
   ];
 
   const aspectRatios = [
-    { id: "1:1", label: "1:1 Kare" },
-    { id: "16:9", label: "16:9 Yatay" },
+    { id: "16:9", label: "16:9 Sinematik" },
     { id: "9:16", label: "9:16 Dikey" },
+    { id: "1:1", label: "1:1 Kare" },
     { id: "4:3", label: "4:3 Klasik" },
   ];
 
   const promptSuggestions = [
-    { title: "Neon Samuray", text: "Yağmurlu fütüristik Tokyo sokaklarında yürüyen sibernetik bir samuray, ıslak zemin yansımaları, neon ışıkları" },
-    { title: "Gökadası Portresi", text: "Gözlerinde dönen galaksi nebulaları olan büyüleyici bir kadın portresi, mistik altın parçacıklar, derin uzay ışığı" },
-    { title: "Fütüristik Süperspor", text: "Dağ virajlarında gün batımında hızla süzülen aero karbon fiber fütüristik hiper araba, hareket bulanıklığı" },
-    { title: "Minyatür Orman Köyü", text: "Dev bir meşe ağacının gövdesine oyulmuş parlayan minyatür peri köyü, cam teraryum içi, makro lens" },
+    {
+      title: "Endüstriyel Tahliye",
+      text: "Immediately after an explosion, three supervisors rush toward an industrial separator tank from a nearby contractor office, helping three frightened but conscious workers safely down from the tank roof using proper emergency access procedures. Camera follows with controlled handheld movement, realistic industrial emergency response, professional corporate safety training film, no blood, no graphic injuries, 16:9.",
+    },
+    {
+      title: "Siberpunk Samuray",
+      text: "Yağmurlu fütüristik Tokyo sokaklarında yürüyen sibernetik bir samuray, ıslak zemin yansımaları, neon ışıkları, 8k sinematik kamera",
+    },
+    {
+      title: "Gökadası Portresi",
+      text: "Gözlerinde dönen galaksi nebulaları olan büyüleyici bir kadın portresi, mistik altın parçacıklar, derin uzay ışığı, dramatik aydınlatma",
+    },
+    {
+      title: "Fütüristik Süperspor",
+      text: "Dağ virajlarında gün batımında hızla süzülen aero karbon fiber fütüristik hiper araba, hareket bulanıklığı, 4k araba çekimi",
+    },
   ];
 
   const promptTags = ["8K UHD", "Masterpiece", "Photorealistic", "Cinematic Lighting", "Octane Render", "Unreal Engine 5", "Volumetric Fog"];
@@ -104,15 +127,56 @@ export function MediaStudioView() {
     loadHistory();
   }, []);
 
+  // Video progress playback loop
+  useEffect(() => {
+    if (!isPlaying) return;
+    const duration = 5000 / playbackSpeed;
+    const startTime = Date.now() - videoProgress * duration;
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = (elapsed % duration) / duration;
+      setVideoProgress(progress);
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [isPlaying, playbackSpeed, videoProgress]);
+
+  // Loading steps animation
+  useEffect(() => {
+    if (!loading) {
+      setLoadingStep(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setLoadingStep((prev) => (prev < 3 ? prev + 1 : 0));
+    }, 2200);
+    return () => clearInterval(interval);
+  }, [loading]);
+
   const loadHistory = async () => {
     try {
       const data = await ApiClient.getMediaHistory();
       setHistory(data || []);
       if (data && data.length > 0 && !selectedAsset) {
         setSelectedAsset(data[0]);
+        if (data[0].meta_info?.camera_motion) {
+          setActiveMotion(data[0].meta_info.camera_motion);
+        }
       }
     } catch (e) {
       console.error("Error loading media history:", e);
+    }
+  };
+
+  const handleTabChange = (tab: "image" | "video") => {
+    setActiveTab(tab);
+    if (tab === "image") {
+      setSelectedModel("flux-1-schnell");
+      setAspectRatio("1:1");
+    } else {
+      setSelectedModel("wan-2.1");
+      setAspectRatio("16:9");
     }
   };
 
@@ -146,6 +210,9 @@ export function MediaStudioView() {
       if (res) {
         setSelectedAsset(res);
         setHistory((prev) => [res, ...prev]);
+        setActiveMotion(selectedCamera);
+        setIsPlaying(true);
+        setVideoProgress(0);
       }
     } catch (e) {
       console.error("Generation error:", e);
@@ -185,9 +252,9 @@ export function MediaStudioView() {
   const getMediaUrl = (asset: MediaAsset): string => {
     if (!asset || !asset.file_url) return "";
     const key = asset.id || asset.file_url;
-    // If local URL errored, try CDN fallback URL from meta_info
     if (imageErrorMap[key]) {
       if (asset.meta_info?.cdn_fallback_url) return asset.meta_info.cdn_fallback_url;
+      if (asset.meta_info?.frame_url) return asset.meta_info.frame_url;
       if (asset.meta_info?.keyframe_preview_url) return asset.meta_info.keyframe_preview_url;
       if (asset.meta_info?.cdn_url) return asset.meta_info.cdn_url;
     }
@@ -198,6 +265,7 @@ export function MediaStudioView() {
     if (!asset) return false;
     return (
       asset.media_type === "video" ||
+      asset.meta_info?.is_cinematic_motion ||
       asset.file_url?.endsWith(".mp4") ||
       asset.file_url?.endsWith(".webm") ||
       asset.model?.includes("video") ||
@@ -208,9 +276,70 @@ export function MediaStudioView() {
     );
   };
 
-  const isRealVideoFile = (url: string) => {
+  const isRealMp4File = (url: string) => {
     return url.endsWith(".mp4") || url.endsWith(".webm");
   };
+
+  // Dynamic Camera Transform based on selected camera motion
+  const getCameraMotionStyle = (motion: string, progress: number, playing: boolean) => {
+    if (!playing) return {};
+
+    const p = progress * Math.PI * 2;
+    switch (motion) {
+      case "360-orbit":
+        const scale = 1.06 + Math.sin(p) * 0.04;
+        const rotateY = Math.sin(p) * 3.5;
+        const transX = Math.cos(p) * 8;
+        return {
+          transform: `scale(${scale}) translateX(${transX}px) rotate(${rotateY}deg)`,
+          transition: "transform 0.1s linear",
+        };
+      case "dolly-zoom":
+        const zoomScale = 1.0 + progress * 0.14;
+        return {
+          transform: `scale(${zoomScale})`,
+          transition: "transform 0.1s linear",
+        };
+      case "fpv-drone":
+        const droneX = Math.sin(p * 1.5) * 12;
+        const droneY = Math.cos(p) * 6;
+        const droneRot = Math.sin(p * 1.5) * 2;
+        return {
+          transform: `scale(1.08) translate(${droneX}px, ${droneY}px) rotate(${droneRot}deg)`,
+          transition: "transform 0.1s linear",
+        };
+      case "crane-shot":
+        const craneY = (0.5 - progress) * 18;
+        return {
+          transform: `scale(1.06) translateY(${craneY}px)`,
+          transition: "transform 0.1s linear",
+        };
+      case "bullet-time":
+        const bRot = (progress - 0.5) * 6;
+        return {
+          transform: `scale(1.1) rotate(${bRot}deg)`,
+          transition: "transform 0.1s linear",
+        };
+      case "pan-smooth":
+        const panX = (0.5 - progress) * 24;
+        return {
+          transform: `scale(1.08) translateX(${panX}px)`,
+          transition: "transform 0.1s linear",
+        };
+      default:
+        return {
+          transform: `scale(${1.04 + Math.sin(p) * 0.02})`,
+          transition: "transform 0.1s linear",
+        };
+    }
+  };
+
+  const loadingMessages = [
+    "Sahne açıklaması ve kamera açısı analiz ediliyor...",
+    "FLUX / Wan 2.1 Sinematik Render alınıyor...",
+    "Kamera hareketi & film greni işleniyor...",
+    "4K Sinematik Sahne hazırlanıyor...",
+  ];
 
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden bg-[#F8F9FB] text-slate-800">
@@ -224,7 +353,7 @@ export function MediaStudioView() {
             <h1 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
               <span>Görsel & Video Medya Stüdyosu</span>
               <span className="px-2 py-0.5 rounded-md bg-orange-100 text-orange-700 text-[10px] font-bold">
-                FLUX 1.0 • WAN 2.1
+                WAN 2.1 • FLUX 1.0 • SEEDANCE 2.0
               </span>
             </h1>
             <p className="text-[11px] text-slate-500">Yapay Zeka Görsel Üretimi, Video Motoru ve Sinematik Kamera Kontrolleri</p>
@@ -234,10 +363,7 @@ export function MediaStudioView() {
         {/* Tab Switcher */}
         <div className="flex p-1 rounded-2xl bg-slate-100 border border-slate-200 shadow-inner">
           <button
-            onClick={() => {
-              setActiveTab("image");
-              setSelectedModel("flux-1-schnell");
-            }}
+            onClick={() => handleTabChange("image")}
             className={cn(
               "flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all",
               activeTab === "image"
@@ -249,10 +375,7 @@ export function MediaStudioView() {
             <span>Görsel Üret</span>
           </button>
           <button
-            onClick={() => {
-              setActiveTab("video");
-              setSelectedModel("wan-2.1");
-            }}
+            onClick={() => handleTabChange("video")}
             className={cn(
               "flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all",
               activeTab === "video"
@@ -284,7 +407,7 @@ export function MediaStudioView() {
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Örn: Yağmurlu Tokyo sokaklarında yürüyen sibernetik samuray, neon ışıkları yansıması, 8k..."
+              placeholder="Örn: Immediately after an explosion, supervisors rush toward an industrial tank, helping workers down safely, cinematic handheld camera, 8k..."
               rows={3}
               className="w-full bg-slate-50 border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none resize-none transition-all"
             />
@@ -307,7 +430,7 @@ export function MediaStudioView() {
           <div className="space-y-1.5">
             <label className="text-[11px] font-bold text-slate-500 flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-amber-500" />
-              <span>İlham Verici Şablonlar</span>
+              <span>Hazır Şablonlar & Senaryolar</span>
             </label>
             <div className="grid grid-cols-2 gap-1.5">
               {promptSuggestions.map((item, idx) => (
@@ -335,7 +458,10 @@ export function MediaStudioView() {
                 <button
                   key={c.id}
                   type="button"
-                  onClick={() => setSelectedCamera(c.id)}
+                  onClick={() => {
+                    setSelectedCamera(c.id);
+                    setActiveMotion(c.id);
+                  }}
                   className={cn(
                     "p-2 rounded-xl text-left border transition-all flex flex-col justify-between shadow-xs",
                     selectedCamera === c.id
@@ -378,11 +504,13 @@ export function MediaStudioView() {
           {/* Model Selector */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
-              <span>Yapay Zeka Modeli</span>
-              <span className="text-[10px] text-slate-400">Üretim Motoru</span>
+              <span>Yapay Zeka Modeli ({activeTab === "video" ? "Video Motoru" : "Görsel Motoru"})</span>
+              <span className="text-[10px] text-slate-400 font-mono">
+                {activeTab === "video" ? "Wan 2.1 / Kling / Veo" : "FLUX / SDXL"}
+              </span>
             </label>
             <div className="grid grid-cols-2 gap-2">
-              {(activeTab === "image" ? imageModels : videoModels).map((m) => (
+              {(activeTab === "video" ? videoModels : imageModels).map((m) => (
                 <button
                   key={m.id}
                   type="button"
@@ -433,18 +561,18 @@ export function MediaStudioView() {
             type="button"
             onClick={handleGenerate}
             disabled={loading || !prompt.trim()}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-xs shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-xs shadow-lg shadow-orange-500/25 transition-all flex flex-col items-center justify-center space-y-1 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? (
-              <>
+              <div className="flex items-center space-x-2">
                 <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                <span>Medya Üretiliyor ({selectedModel})...</span>
-              </>
+                <span>{loadingMessages[loadingStep]}</span>
+              </div>
             ) : (
-              <>
+              <div className="flex items-center space-x-2">
                 <Wand2 className="w-4 h-4" />
-                <span>{activeTab === "image" ? "FLUX Görsel Üret" : "Sinematik Video Üret"}</span>
-              </>
+                <span>{activeTab === "video" ? "🎬 Wan 2.1 Video & Sinematik Sahne Üret" : "🎨 FLUX Görsel Üret"}</span>
+              </div>
             )}
           </button>
         </div>
@@ -452,11 +580,12 @@ export function MediaStudioView() {
         {/* Right Preview Screen */}
         <div className="lg:col-span-7 bg-[#F8F9FB] flex flex-col p-6 overflow-y-auto space-y-6">
           {/* Main Visual Frame */}
-          <div className="flex-1 min-h-[420px] rounded-3xl bg-white border border-slate-200 flex flex-col items-center justify-center relative overflow-hidden group shadow-sm">
+          <div className="flex-1 min-h-[460px] rounded-3xl bg-white border border-slate-200 flex flex-col items-center justify-center relative overflow-hidden group shadow-sm">
             {selectedAsset ? (
-              <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                <div className="relative max-h-[440px] max-w-full flex items-center justify-center rounded-2xl overflow-hidden bg-slate-900 shadow-md border border-slate-200">
-                  {isRealVideoFile(getMediaUrl(selectedAsset)) ? (
+              <div className="w-full h-full flex flex-col items-center justify-between p-4">
+                {/* Cinematic Motion Video Stage */}
+                <div className="relative w-full flex-1 max-h-[440px] flex items-center justify-center rounded-2xl overflow-hidden bg-slate-950 shadow-md border border-slate-200">
+                  {isRealMp4File(getMediaUrl(selectedAsset)) ? (
                     <video
                       src={getMediaUrl(selectedAsset)}
                       controls
@@ -466,36 +595,98 @@ export function MediaStudioView() {
                       className="max-h-[420px] max-w-full rounded-2xl object-contain"
                     />
                   ) : (
-                    <img
-                      src={getMediaUrl(selectedAsset)}
-                      alt={selectedAsset.prompt || "Üretilen Medya"}
-                      onError={() => {
-                        const key = selectedAsset.id || selectedAsset.file_url;
-                        setImageErrorMap((prev) => ({ ...prev, [key]: true }));
-                      }}
-                      className="max-h-[420px] max-w-full rounded-2xl object-contain"
-                    />
+                    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                      {/* Photorealistic AI Scene Frame with Live Cinematic Camera Motion */}
+                      <img
+                        src={getMediaUrl(selectedAsset)}
+                        alt={selectedAsset.prompt || "Üretilen Sinematik Sahne"}
+                        style={getCameraMotionStyle(activeMotion, videoProgress, isPlaying)}
+                        onError={() => {
+                          const key = selectedAsset.id || selectedAsset.file_url;
+                          setImageErrorMap((prev) => ({ ...prev, [key]: true }));
+                        }}
+                        className="max-h-[430px] max-w-full rounded-2xl object-contain select-none"
+                      />
+
+                      {/* Film Grain & Cinematic Vignette Overlay */}
+                      <div className="absolute inset-0 pointer-events-none bg-radial-vignette opacity-40" />
+
+                      {/* Camera HUD Overlay */}
+                      <div className="absolute top-3 left-3 flex items-center gap-2 pointer-events-none">
+                        <span className="px-2.5 py-1 rounded-xl bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-sm">
+                          <span className={cn("w-2 h-2 rounded-full", isPlaying ? "bg-red-500 animate-ping" : "bg-slate-500")} />
+                          <span>REC • 4K UHD</span>
+                        </span>
+                        <span className="px-2.5 py-1 rounded-xl bg-slate-950/80 backdrop-blur-md text-amber-400 text-[10px] font-mono border border-white/10 shadow-sm">
+                          🎥 {activeMotion}
+                        </span>
+                      </div>
+
+                      <div className="absolute top-3 right-3 flex items-center gap-2">
+                        {/* Camera Motion Switcher */}
+                        <div className="flex bg-slate-900/80 backdrop-blur-md rounded-xl p-0.5 border border-white/10">
+                          {["360-orbit", "dolly-zoom", "fpv-drone"].map((m) => (
+                            <button
+                              key={m}
+                              onClick={() => setActiveMotion(m)}
+                              className={cn(
+                                "px-2 py-0.5 text-[9px] font-bold rounded-lg transition-colors",
+                                activeMotion === m ? "bg-orange-500 text-white" : "text-slate-400 hover:text-white"
+                              )}
+                            >
+                              {m === "360-orbit" ? "Orbit" : m === "dolly-zoom" ? "Dolly" : "Drone"}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Lightbox / Zoom */}
+                        <button
+                          onClick={() => setLightboxOpen(true)}
+                          className="p-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-900 text-white backdrop-blur-md border border-white/10 transition-colors shadow-sm"
+                          title="Tam Ekran"
+                        >
+                          <Maximize2 className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Bottom Floating Video Scrubber & Play Controls */}
+                      <div className="absolute bottom-3 inset-x-3 bg-slate-950/85 backdrop-blur-md rounded-2xl p-2.5 border border-white/10 flex flex-col gap-1.5 shadow-lg">
+                        {/* Progress Bar */}
+                        <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden cursor-pointer">
+                          <div
+                            className="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full transition-all duration-75"
+                            style={{ width: `${videoProgress * 100}%` }}
+                          />
+                        </div>
+
+                        {/* Controls Bar */}
+                        <div className="flex items-center justify-between text-white text-[11px] px-1">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setIsPlaying(!isPlaying)}
+                              className="p-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white transition-colors"
+                            >
+                              {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-white" />}
+                            </button>
+                            <span className="font-mono text-slate-300">
+                              00:0{Math.floor(videoProgress * 5)} / 00:05
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-3 text-slate-400 text-[10px]">
+                            <span>Model: <b className="text-slate-200">{selectedAsset.model}</b></span>
+                            <span>Açı: <b className="text-orange-400">{activeMotion}</b></span>
+                            <button
+                              onClick={() => setPlaybackSpeed(playbackSpeed === 1 ? 1.5 : playbackSpeed === 1.5 ? 0.5 : 1)}
+                              className="px-1.5 py-0.5 rounded bg-slate-800 text-white font-mono"
+                            >
+                              {playbackSpeed}x
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   )}
-
-                  {/* Top Badges Overlay */}
-                  <div className="absolute top-3 left-3 flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold border border-white/10 flex items-center gap-1.5 shadow-sm">
-                      {isVideoAsset(selectedAsset) ? <Video className="w-3 h-3 text-orange-400" /> : <ImageIcon className="w-3 h-3 text-orange-400" />}
-                      <span>{selectedAsset.model || "FLUX 1.0"}</span>
-                    </span>
-                    <span className="px-2 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md text-slate-300 text-[10px] font-mono border border-white/10 shadow-sm">
-                      {selectedAsset.aspect_ratio || "1:1"}
-                    </span>
-                  </div>
-
-                  {/* Lightbox / Zoom Button */}
-                  <button
-                    onClick={() => setLightboxOpen(true)}
-                    className="absolute top-3 right-3 p-2 rounded-xl bg-slate-900/80 hover:bg-slate-900 text-white backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-                    title="Büyüt"
-                  >
-                    <Maximize2 className="w-4 h-4" />
-                  </button>
                 </div>
 
                 {/* Bottom Asset Details & Actions Bar */}
@@ -504,11 +695,11 @@ export function MediaStudioView() {
                     <p className="text-xs font-semibold text-slate-800 line-clamp-2">
                       {selectedAsset.prompt || selectedAsset.meta_info?.prompt || "Medya Üretimi"}
                     </p>
-                    {selectedAsset.meta_info?.camera_angle && (
-                      <p className="text-[10px] text-orange-600 font-medium mt-0.5">
-                        Kamera: {selectedAsset.meta_info.camera_angle}
-                      </p>
-                    )}
+                    <p className="text-[10px] text-orange-600 font-medium mt-0.5 flex items-center gap-2">
+                      <span>Kamera: {activeMotion}</span>
+                      <span>•</span>
+                      <span>En-Boy: {selectedAsset.aspect_ratio || "16:9"}</span>
+                    </p>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
@@ -549,9 +740,9 @@ export function MediaStudioView() {
                 <div className="w-16 h-16 rounded-3xl bg-orange-50 border border-orange-200 flex items-center justify-center mx-auto text-orange-600 shadow-xs">
                   <Sparkles className="w-8 h-8" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-800">Medya Önizleme Ekranı</h3>
+                <h3 className="text-sm font-bold text-slate-800">Medya & Video Önizleme Sahnesi</h3>
                 <p className="text-xs text-slate-500 max-w-md leading-relaxed">
-                  Sol panelden sahne açıklamasını yazın ve istediğiniz modeli seçin. Üretilen yüksek çözünürlüklü görsel veya sinematik video burada görüntülenecektir.
+                  Sol panelden sahne açıklamasını yazın ve kamera hareketini seçerek <b>Wan 2.1 Video & Sinematik Sahne Üret</b> butonuna basın. Gerçekçi sinematik sahneniz ve hareket animasyonu burada oynatılacaktır.
                 </p>
               </div>
             )}
@@ -589,13 +780,19 @@ export function MediaStudioView() {
                   return (
                     <div
                       key={item.id || idx}
-                      onClick={() => setSelectedAsset(item)}
+                      onClick={() => {
+                        setSelectedAsset(item);
+                        if (item.meta_info?.camera_motion) {
+                          setActiveMotion(item.meta_info.camera_motion);
+                        }
+                        setIsPlaying(true);
+                      }}
                       className={cn(
                         "group relative aspect-square rounded-2xl bg-slate-900 border overflow-hidden cursor-pointer transition-all hover:scale-105 shadow-xs flex items-center justify-center",
                         isSelected ? "border-orange-500 ring-2 ring-orange-500/30" : "border-slate-200"
                       )}
                     >
-                      {isRealVideoFile(itemUrl) ? (
+                      {isRealMp4File(itemUrl) ? (
                         <video src={itemUrl} className="w-full h-full object-cover pointer-events-none" muted />
                       ) : (
                         <img
@@ -646,7 +843,7 @@ export function MediaStudioView() {
             >
               <X className="w-5 h-5" />
             </button>
-            {isRealVideoFile(getMediaUrl(selectedAsset)) ? (
+            {isRealMp4File(getMediaUrl(selectedAsset)) ? (
               <video
                 src={getMediaUrl(selectedAsset)}
                 controls
@@ -659,6 +856,7 @@ export function MediaStudioView() {
               <img
                 src={getMediaUrl(selectedAsset)}
                 alt={selectedAsset.prompt}
+                style={getCameraMotionStyle(activeMotion, videoProgress, isPlaying)}
                 className="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl"
               />
             )}
