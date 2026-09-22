@@ -140,6 +140,8 @@ export class ApiClient {
   static directCreateDocument = (data: any) => this.request<any>("/files/create", { method: "POST", body: JSON.stringify(data) });
   static deleteDocument = (id: string) => this.request<any>(`/files/${id}`, { method: "DELETE" });
   static queryDocument = (data: any) => this.request<any>("/files/query", { method: "POST", body: JSON.stringify(data) });
+  static workspaceChat = (data: any) => this.request<any>("/files/workspace/chat", { method: "POST", body: JSON.stringify(data) });
+  static workspaceSynthesize = (data: any) => this.request<any>("/files/workspace/synthesize", { method: "POST", body: JSON.stringify(data) });
   static getDownloadUrl = (id: string) => `${API_BASE_URL}/files/download/${id}`;
 
 
