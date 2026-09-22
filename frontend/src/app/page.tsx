@@ -16,11 +16,9 @@ import {
   User as UserIcon,
   LogIn,
   UserPlus,
-  Flame,
-  Globe,
-  Crown,
 } from "lucide-react";
 import { useAuth } from "../context/auth-context";
+
 
 export default function HomePage() {
   const { user, isAuthenticated } = useAuth();
@@ -115,25 +113,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Center / Right Badges & Actions */}
+          {/* Right Actions */}
           <div className="flex items-center space-x-3">
-            {/* 5 days streak */}
-            <div className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#FFF3E8] border border-[#FFD8B8] text-[#FF6B00] text-xs font-bold shadow-xs">
-              <Flame className="w-3.5 h-3.5 fill-[#FF6B00]" />
-              <span>5 days</span>
-            </div>
 
-            {/* EN pill */}
-            <div className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#FFF8F0] border border-[#FFE2CC] text-[#D96B00] text-xs font-bold shadow-xs">
-              <Globe className="w-3.5 h-3.5" />
-              <span>EN</span>
-            </div>
-
-            {/* Plus pill */}
-            <div className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-[#FFA200] to-[#FF6B00] text-white text-xs font-extrabold shadow-sm shadow-orange-500/20">
-              <Crown className="w-3.5 h-3.5 fill-white" />
-              <span>Plus</span>
-            </div>
 
             {isAuthenticated ? (
               <>

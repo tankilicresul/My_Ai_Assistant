@@ -15,6 +15,18 @@ class User(Base):
     quota_tokens = Column(Integer, default=100_000_000)
     used_tokens = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
+    is_banned = Column(Boolean, default=False)
+    ban_reason = Column(String(255), nullable=True)
+
+    # Granular Permission Capabilities
+    can_chat = Column(Boolean, default=True)
+    can_code_studio = Column(Boolean, default=True)
+    can_deep_research = Column(Boolean, default=True)
+    can_media_gen = Column(Boolean, default=True)
+    can_voice = Column(Boolean, default=True)
+    can_upload_files = Column(Boolean, default=True)
+    can_create_agents = Column(Boolean, default=True)
+
     oauth_provider = Column(String(50), nullable=True)  # 'github', 'google'
     oauth_id = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

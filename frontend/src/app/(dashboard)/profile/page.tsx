@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Flame,
-  Globe,
-  Crown,
   CheckCircle2,
+
   AlertCircle,
   Building2,
   GraduationCap,
@@ -107,40 +106,9 @@ export default function ProfilePage() {
 
   return (
     <div className="flex-1 p-4 md:p-8 space-y-6 max-w-4xl mx-auto w-full">
-      {/* Top Bar Badges (Like 2nd photo) */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FFA200] via-[#FF7500] to-[#FF4800] flex items-center justify-center shadow-md shadow-orange-500/20">
-            <Zap className="w-4 h-4 text-white fill-white" />
-          </div>
-          <span className="font-extrabold text-xl tracking-tight text-slate-900">
-            TanCore<span className="text-orange-600">Lab</span>
-          </span>
-        </div>
-
-        <div className="flex items-center space-x-2.5 flex-wrap">
-          {/* 5 days streak badge */}
-          <div className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-[#FFF3E8] border border-[#FFD8B8] text-[#FF6B00] text-xs font-bold shadow-xs">
-            <Flame className="w-3.5 h-3.5 fill-[#FF6B00]" />
-            <span>5 days</span>
-          </div>
-
-          {/* EN language badge */}
-          <div className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-[#FFF8F0] border border-[#FFE2CC] text-[#D96B00] text-xs font-bold shadow-xs">
-            <Globe className="w-3.5 h-3.5" />
-            <span>EN</span>
-          </div>
-
-          {/* Plus Member Badge */}
-          <div className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#FFA200] to-[#FF6B00] text-white text-xs font-extrabold shadow-md shadow-orange-500/25">
-            <Crown className="w-3.5 h-3.5 fill-white" />
-            <span>Plus</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Profile Hero Card (Exact styling from 2nd photo) */}
       <div className="relative rounded-[28px] bg-gradient-to-r from-[#FFA200] via-[#FF7500] to-[#FF4800] p-6 md:p-8 text-white shadow-xl shadow-orange-500/20 overflow-hidden">
+
         {/* Subtle background glow effect */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 

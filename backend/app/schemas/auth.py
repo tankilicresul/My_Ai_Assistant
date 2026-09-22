@@ -26,6 +26,15 @@ class UserResponse(BaseModel):
     quota_tokens: int
     used_tokens: int
     is_active: bool
+    is_banned: bool = False
+    ban_reason: Optional[str] = None
+    can_chat: bool = True
+    can_code_studio: bool = True
+    can_deep_research: bool = True
+    can_media_gen: bool = True
+    can_voice: bool = True
+    can_upload_files: bool = True
+    can_create_agents: bool = True
     created_at: Optional[datetime] = None
 
     class Config:

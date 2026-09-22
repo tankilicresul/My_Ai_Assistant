@@ -14,11 +14,23 @@ from app.schemas.auth import (
 )
 from app.api.deps import get_current_user
 
+from app.models.system_setting import SystemSetting
+
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=TokenResponse)
 async def register(req: UserRegisterRequest, db: AsyncSession = Depends(get_db)):
     clean_email = req.email.strip().lower()
+
+    # Check if registration is open
+    stmt_setting = select(SystemSetting)
+    res_setting = await db.execute(stmt_setting)
+    setting = res_setting.scalar_one_or_none()
+    if setting and not setting.allow_registration:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Yeni kullanıcı kaydı şu anda yönetici tarafından geçici olarak kapatılmıştır."
+        )
     
     if len(req.password) < 6:
         raise HTTPException(
@@ -34,14 +46,24 @@ async def register(req: UserRegisterRequest, db: AsyncSession = Depends(get_db))
             detail="Bu e-posta adresi ile kayıtlı bir kullanıcı zaten mevcut."
         )
 
+    default_quota = setting.default_user_quota if setting else 100_000_000
+
     new_user = User(
         email=clean_email,
         hashed_password=get_password_hash(req.password),
         full_name=req.full_name.strip() if req.full_name else None,
         role="user",
-        quota_tokens=100_000_000,
+        quota_tokens=default_quota,
         used_tokens=0,
-        is_active=True
+        is_active=True,
+        is_banned=False,
+        can_chat=True,
+        can_code_studio=True,
+        can_deep_research=True,
+        can_media_gen=True,
+        can_voice=True,
+        can_upload_files=True,
+        can_create_agents=True
     )
     db.add(new_user)
     await db.commit()
@@ -65,6 +87,13 @@ async def login(req: UserLoginRequest, db: AsyncSession = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Geçersiz e-posta veya şifre."
+        )
+
+    if user.is_banned:
+        reason = f" Sebep: {user.ban_reason}" if user.ban_reason else ""
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Hesabınız sistem yöneticisi tarafından erişime kapatılmıştır.{reason}"
         )
 
     if not user.is_active:

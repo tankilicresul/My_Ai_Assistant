@@ -61,6 +61,13 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"}
         )
 
+    if user.is_banned:
+        reason = f" Sebep: {user.ban_reason}" if user.ban_reason else ""
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Hesabınız sistem yöneticisi tarafından askıya alınmıştır.{reason}"
+        )
+
     return user
 
 async def get_current_admin_user(

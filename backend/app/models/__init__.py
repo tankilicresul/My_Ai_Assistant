@@ -8,6 +8,7 @@ from app.models.memory import UserMemory
 from app.models.document import Document
 from app.models.agent import Agent
 from app.models.audit import AuditLog
+from app.models.system_setting import SystemSetting
 
 __all__ = [
     "Base",
@@ -20,5 +21,6 @@ __all__ = [
     "UserMemory",
     "Document",
     "Agent",
-    "AuditLog"
+    "AuditLog",
+    "SystemSetting"
 ]
