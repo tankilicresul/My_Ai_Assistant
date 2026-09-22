@@ -95,6 +95,17 @@ export class ApiClient {
   static getMediaHistory = () => this.request<any[]>("/media/history");
   static generateImage = (data: any) => this.request<any>("/media/generate/image", { method: "POST", body: JSON.stringify(data) });
   static generateVideo = (data: any) => this.request<any>("/media/generate/video", { method: "POST", body: JSON.stringify(data) });
+  static deleteMedia = (id: string) => this.request<any>(`/media/${id}`, { method: "DELETE" });
+
+  static resolveMediaUrl(url?: string | null): string {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:") || url.startsWith("blob:")) {
+      return url;
+    }
+    const baseUrl = API_BASE_URL.replace(/\/api\/v1\/?$/, "");
+    const cleanUrl = url.startsWith("/") ? url : `/${url}`;
+    return `${baseUrl}${cleanUrl}`;
+  }
 
   // Deep Research APIs
   static getResearchTasks = () => this.request<any[]>("/research/tasks");
