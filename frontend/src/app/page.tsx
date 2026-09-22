@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   MessageSquare,
@@ -13,9 +15,14 @@ import {
   Terminal,
   Cpu,
   Radio,
+  User as UserIcon,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
+import { useAuth } from "../context/auth-context";
 
 export default function HomePage() {
+  const { user, isAuthenticated, logout } = useAuth();
   const modules = [
     {
       title: "1. Çoklu Yapay Zeka Sohbeti",
@@ -109,17 +116,47 @@ export default function HomePage() {
               </span>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/chat"
-              className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition-all shadow-md shadow-indigo-600/25 flex items-center space-x-2"
-            >
-              <span>Platformu Aç</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+
+          <div className="flex items-center space-x-3">
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/profile"
+                  className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-medium border border-slate-700/60 flex items-center space-x-2 transition-all"
+                >
+                  <UserIcon className="w-3.5 h-3.5 text-indigo-400" />
+                  <span className="max-w-[120px] truncate">{user?.full_name || user?.email?.split("@")[0]}</span>
+                </Link>
+                <Link
+                  href="/chat"
+                  className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs sm:text-sm transition-all shadow-md shadow-indigo-600/25 flex items-center space-x-2"
+                >
+                  <span>Panele Git</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="px-3.5 py-1.5 rounded-lg text-slate-300 hover:text-white text-xs sm:text-sm font-medium hover:bg-slate-800/60 transition-all flex items-center space-x-1.5"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Giriş Yap</span>
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium text-xs sm:text-sm transition-all shadow-md shadow-indigo-600/25 flex items-center space-x-1.5"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>Kayıt Ol (100M Token)</span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
+
 
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center">

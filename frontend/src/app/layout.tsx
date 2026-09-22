@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from "../context/auth-context";
 
 export const metadata: Metadata = {
   title: "NexusAI - Enterprise AI Super-Platform",
@@ -14,8 +15,11 @@ export default function RootLayout({
   return (
     <html lang="tr" className="dark">
       <body className="bg-[#090d16] text-slate-100 min-h-screen antialiased flex flex-col">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
 }
+

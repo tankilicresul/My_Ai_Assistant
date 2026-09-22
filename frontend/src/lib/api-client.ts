@@ -62,6 +62,9 @@ export class ApiClient {
   static login = (data: any) => this.request<any>("/auth/login", { method: "POST", body: JSON.stringify(data) });
   static register = (data: any) => this.request<any>("/auth/register", { method: "POST", body: JSON.stringify(data) });
   static getMe = () => this.request<any>("/auth/me");
+  static updateProfile = (data: any) => this.request<any>("/auth/profile", { method: "PUT", body: JSON.stringify(data) });
+  static changePassword = (data: any) => this.request<any>("/auth/password", { method: "PUT", body: JSON.stringify(data) });
+
 
   // Chat APIs
   static getModels = () => this.request<any[]>("/chat/models");
